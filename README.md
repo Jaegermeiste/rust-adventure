@@ -1,6 +1,7 @@
 # rust-adventure
 
 rust-adventure - a small adventure game written in Rust
+
 Copyright (C) 2019 Jason George
 
 This program is free software: you can redistribute it and/or modify
