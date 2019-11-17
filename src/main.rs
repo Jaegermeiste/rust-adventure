@@ -39,9 +39,9 @@ fn main() {
 	let mut menu_selection	= 0;
 
     // License attribution
-    println!("rust-adventure (C) 2019 Jason George");
-    println!("This program comes with ABSOLUTELY NO WARRANTY; for details select 'About->Show Warranty Details' at the menu.");
-    println!("This is free software, and you are welcome to redistribute it under certain conditions; select 'About->Show Redistibution Details' at the menu for details.");
+    println!(" rust-adventure (C) 2019 Jason George");
+    println!(" This program comes with ABSOLUTELY NO WARRANTY; for details select 'About->Show Warranty Details' at the menu.");
+    println!(" This is free software, and you are welcome to redistribute it under certain conditions; select 'About->Show Redistibution Details' at the menu for details.");
 
     // Display the Main Menu
 	menu_selection = menu_system.run_page(main_menu_index);

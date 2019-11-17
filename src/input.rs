@@ -26,6 +26,7 @@ use crossterm::{
     Result,
 };
 
+#[derive(PartialEq, Eq, Clone)] 
 pub enum InputNumericType
 {
 	Double,
@@ -154,7 +155,7 @@ impl Input {
     }
 
     pub fn get_double_value_from_console(&self, mut lower_bound : f64, mut upper_bound : f64, numeric_type : InputNumericType, cancel_value: char) -> f64 {
-        let mut	input_value :f64		= 0.0;
+        let mut	input_value :f64		= std::f64::NAN;
         let mut flag_input_valid : bool	= false;
         let mut test_char : char		= ' ';
         let input = crossterm::input::input();
@@ -163,7 +164,7 @@ impl Input {
         self.canceled.set(false);
 
          // Ensure bounds are valid for input type
-        match numeric_type
+        match numeric_type.clone()
         {
             InputNumericType::UnsignedInteger => {
                 if lower_bound < (std::u32::MIN as f64) {
@@ -185,54 +186,63 @@ impl Input {
             _ => (),
         }
 
-        /*while (flag_input_valid == false) && (self.canceled.get() == false)
+        while (flag_input_valid == false) && (self.canceled.get() == false)
         {
             // Grab a test char from stdin
             {
                 let _raw = RawScreen::into_raw_mode();  // Go into raw for just this scope
 
-                match input.read_char().iter(). {
-                    Ok(c) => input_value = c,
+                match input.read_char() {
+                    Ok(c) => test_char = c,
                     Err(e) => println!("Read Error: {}", e),
                 }
-                std::cin >> std::ws;  // eat up any leading white spaces
-                testChar = cin.peek();
-
-                /*if ((testChar >= '0' && testChar <= '9') || (testChar == '.'))
-                {
-                    // Input is (probably) a number
-                    cin.unget();
-                }
-                else*/ if test_char == cancel_value {
+                
+                if test_char == cancel_value {
                     flag_input_valid = true;
                     self.canceled.set(true);
                 }
             }
 
-            if (self.canceled.get() == false) && (cin >> inputValue) && (input_value >= lower_bound) && (input_value <= upper_bound) && ((numeric_type == InputNumericType::Double) || (input_value.round() == input_value))
-            {
-                // Set flag_input_valid to true so that loop ends on next go-around
-                flag_input_valid = true;
-            }
-            else if self.canceled.get() == false {
-                // Display a message indicating to the user the invalid input, and to try again
-                match numeric_type
-                {
-                    UnsignedInteger => {
-                        println!(" Invalid input. Please try again. Valid input is an unsigned integer number ranging from {0} to {1}", lower_bound as u32, upper_bound as u32);
-                    }
-                    SignedInteger => {
-                        println!(" Invalid input. Please try again. Valid input is a signed integer number ranging from {0} to {1}", lower_bound as i32, upper_bound as i32);
-                    }
-                    _ => {
-                        println!(" Invalid input. Please try again. Valid input is a floating-point number ranging from {0} to {1}", lower_bound, upper_bound);
-                    }
+            if self.canceled.get() == false {
+                let mut input_line : String = "".to_string();
+                input_line.clear();
+
+                match input.read_line() {
+                    Ok(s) => input_line = s,
+                    Err(e) => println!("Read Error: {}", e),
                 }
 
-                // Sanity check: Set flag_input_valid to false to ensure that loop continues
-                flag_input_valid = false;
+                input_value = input_line.parse::<f64>().unwrap();
+            
+
+                if (input_value != std::f64::NAN) && 
+                    (input_value >= lower_bound) && 
+                    (input_value <= upper_bound) &&
+                    ((numeric_type == InputNumericType::Double) || (input_value.round() == input_value))
+                {
+                    // Set flag_input_valid to true so that loop ends on next go-around
+                    flag_input_valid = true;
+                }
+                else {
+                    // Display a message indicating to the user the invalid input, and to try again
+                    match numeric_type
+                    {
+                        InputNumericType::UnsignedInteger => {
+                            println!(" Invalid input. Please try again. Valid input is an unsigned integer number ranging from {0} to {1}", lower_bound as u32, upper_bound as u32);
+                        }
+                        InputNumericType::SignedInteger => {
+                            println!(" Invalid input. Please try again. Valid input is a signed integer number ranging from {0} to {1}", lower_bound as i32, upper_bound as i32);
+                        }
+                        _ => {
+                            println!(" Invalid input. Please try again. Valid input is a floating-point number ranging from {0} to {1}", lower_bound, upper_bound);
+                        }
+                    }
+
+                    // Sanity check: Set flag_input_valid to false to ensure that loop continues
+                    flag_input_valid = false;
+                }
             }
-        }*/
+        }
 
         return input_value;
     }
