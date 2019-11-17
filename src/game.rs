@@ -23,12 +23,12 @@ pub struct Game {
     pub input: *const Input,
 }
 
-pub fn new(in_input : &mut Input) -> Game {
-    Game { 
-        input: (in_input),
-        }
-}
-
 impl Game {
+    pub fn new(in_input : &mut Input) -> Game {
+        Game { 
+            input: (in_input),
+            }
+    }
+    
     pub fn run(&self) {}
 }

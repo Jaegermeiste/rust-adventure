@@ -24,15 +24,18 @@ pub struct Menu {
     pub input: *const Input,
 }
 
-pub fn new(in_input : &Input) -> Menu {
-    Menu { 
-        input: in_input,
-        }
-}
-
 impl Menu {
+    pub fn new(in_input : &Input) -> Menu {
+        Menu { 
+            input: in_input,
+            }
+    }
+
     pub fn add_page(&self, in_name : &str) -> u32 {(0)}
+    
     pub fn add_action_to_page(&self, in_page_index : u32, in_action : MenuAction) -> u32 {(0)}
+    
     pub fn run_page(&self, in_page_index : u32) -> u32 {(0)}
+    
     pub fn run(&self) -> u32 {(0)}
 }

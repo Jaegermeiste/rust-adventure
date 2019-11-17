@@ -35,14 +35,14 @@ impl Default for Input {
     }
 }
 
-pub fn new() -> Input {
-    Input { 
-        last_input_stdin: false,
-        flushed         : false,
-        canceled        : false, 
-        }
-}
-
 impl Input {
+    pub fn new() -> Input {
+        Input { 
+            last_input_stdin: false,
+            flushed         : false,
+            canceled        : false, 
+            }
+    }
+    
     pub fn canceled(&self) -> &bool {&self.canceled}
 }

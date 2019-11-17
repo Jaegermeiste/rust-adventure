@@ -19,20 +19,23 @@
 **************************************************************************/
 
 mod input;
+use crate::input::Input;
 mod menu;
+use crate::menu::Menu;
 mod menuaction;
 use crate::menuaction::MenuAction;
 use crate::menuaction::MenuActionType;
 mod game;
+use crate::game::Game;
 
 fn main() {
-    let mut input           = input::new();
-    let menu_system         = menu::new(&mut input);
+    let mut input           = Input::new();
+    let menu_system         = Menu::new(&mut input);
     let main_menu_index     = menu_system.add_page("Main Menu");
     let about_page_index    = menu_system.add_page("About");
-    let new_game_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Start New Game",	MenuActionType::MENUACTIONTYPE_SELECTOR));
-    let about_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("About",	        MenuActionType::MENUACTIONTYPE_SELECTOR));
-	let quit_option		    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Exit Program",	MenuActionType::MENUACTIONTYPE_EXIT_MENU));
+    let new_game_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Start New Game",	MenuActionType::Selector));
+    let about_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("About",	        MenuActionType::Selector));
+	let quit_option		    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Exit Program",	MenuActionType::ExitMenu));
 	let mut menu_selection	= 0;
 
     // License attribution
@@ -48,7 +51,7 @@ fn main() {
 	{
 		if menu_selection == new_game_option
 		{
-			let game = game::new(&mut input);
+			let game = Game::new(&mut input);
 
 			game.run();
         }

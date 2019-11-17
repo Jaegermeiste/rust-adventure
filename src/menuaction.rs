@@ -20,19 +20,19 @@
 
 pub enum MenuActionType
 {
-	MENUACTIONTYPE_NULL,
-	MENUACTIONTYPE_SELECTOR,
-	MENUACTIONTYPE_LAUNCH_MENU_PAGE,
-	MENUACTIONTYPE_EXIT_MENU,
-	MENUACTIONTYPE_BOOL,
-	MENUACTIONTYPE_INT,
-	MENUACTIONTYPE_INT_RANGE_UPPER_INCLUSIVE,
-	MENUACTIONTYPE_INT_RANGE_UPPER_EXCLUSIVE,
-	MENUACTIONTYPE_INT_LIST,
-	MENUACTIONTYPE_STRING_LIST,
-	MENUACTIONTYPE_STRING_LIST_OVERRIDE,
-	MENUACTIONTYPE_STRING,
-	MENUACTIONTYPE_MAX
+	Null,
+	Selector,
+	LaunchMenuPage,
+	ExitMenu,
+	Bool,
+	Int,
+	IntRangeUpperInclusive,
+	IntRangeUpperExclusive,
+	IntList,
+	StringList,
+	StringListOverride,
+	String,
+	Max
 }
 
 pub struct MenuAction {
@@ -59,7 +59,7 @@ impl Default for MenuAction {
             valid_value_list        : vec![i32::min_value(), i32::max_value()],
             valid_value_string_list : vec!["MinRange".to_string(), "MaxRange".to_string()],
             upper_bound_inclusive   : true,
-            action_type             : MenuActionType::MENUACTIONTYPE_NULL,
+            action_type             : MenuActionType::Null,
             min_action              : std::ptr::null(),
             max_action              : std::ptr::null(),
             default_value_action    : std::ptr::null(),
