@@ -225,13 +225,13 @@ impl Input {
                 }
                 else {
                     // Display a message indicating to the user the invalid input, and to try again
-                    match numeric_type
+                    match numeric_type.clone()
                     {
                         InputNumericType::UnsignedInteger => {
-                            println!(" Invalid input. Please try again. Valid input is an unsigned integer number ranging from {0} to {1}", lower_bound as u32, upper_bound as u32);
+                            println!(" Invalid input. Please try again. Valid input is an unsigned integer number ranging from {0:.} to {1:.}", lower_bound as u32, upper_bound as u32);
                         }
                         InputNumericType::SignedInteger => {
-                            println!(" Invalid input. Please try again. Valid input is a signed integer number ranging from {0} to {1}", lower_bound as i32, upper_bound as i32);
+                            println!(" Invalid input. Please try again. Valid input is a signed integer number ranging from {0:.} to {1:.}", lower_bound as i32, upper_bound as i32);
                         }
                         _ => {
                             println!(" Invalid input. Please try again. Valid input is a floating-point number ranging from {0} to {1}", lower_bound, upper_bound);
@@ -241,6 +241,103 @@ impl Input {
                     // Sanity check: Set flag_input_valid to false to ensure that loop continues
                     flag_input_valid = false;
                 }
+            }
+        }
+
+        return input_value;
+    }
+
+    pub fn get_double_value_from_console_for_vector (&self, mut allowed_value_list : Vec<f64>, numeric_type : InputNumericType) -> f64 {
+        let mut	input_value :f64		= std::f64::NAN;
+        let mut flag_input_valid : bool	= false;
+        let input = crossterm::input::input();
+
+        // Ensure bounds are valid for input type
+        for element in allowed_value_list.iter_mut() {
+            match numeric_type.clone() {
+                InputNumericType::UnsignedInteger => {
+                    if *element < (std::u32::MIN as f64) {
+                        *element = std::u32::MIN as f64;
+                    }
+                    else if *element > (std::u32::MAX as f64) {
+                        *element = std::u32::MAX as f64;
+                    }
+                }
+                InputNumericType::SignedInteger => {
+                    if *element < (std::i32::MIN as f64) {
+                        *element = std::i32::MIN as f64;
+                    }
+                    else if *element > (std::i32::MAX as f64) {
+                        *element = std::i32::MAX as f64;
+                    }
+                }
+                InputNumericType::Double => (),
+                _ => (),
+            }
+        }
+
+        while flag_input_valid == false {
+            let mut input_line : String = "".to_string();
+            input_line.clear();
+            input_value = std::f64::NAN;
+
+            match input.read_line() {
+                Ok(s) => input_line = s,
+                Err(e) => println!("Read Error: {}", e),
+            }
+
+            input_value = input_line.parse::<f64>().unwrap();
+
+            if input_value != std::f64::NAN
+            {
+                // Input was of the right type, now check it against the allowed value list
+                for element in allowed_value_list.iter() {
+                    if input_value == *element {
+                        // We found the value in the list, so set flag_input_valid to true so that loop ends on next go-around
+                        flag_input_valid = true;
+                        
+                        // Terminate loop early
+                        break;
+                    }
+                }
+            }
+
+            if flag_input_valid == false {
+                // Display a message indicating to the user the invalid input, and to try again
+                let mut error_msg : String = " Invalid input. Please try again. Valid inputs are any of the following: ".to_string();
+
+                let mut counter : u32 = 0;      // Counter to find the last element in the iterator
+                for element in allowed_value_list.iter() {
+
+                    let mut trail_char : String = ", ".to_string();
+
+                    if counter == ((allowed_value_list.len() as u32) - 1) {
+                        // End of the list, output a period and endl
+                        trail_char = ".".to_string();
+                    }
+
+                    match numeric_type.clone()
+                    {
+                        InputNumericType::UnsignedInteger => {
+                            error_msg = format!("{} {:.}{}", error_msg, element, trail_char);
+                        }
+                        InputNumericType::SignedInteger => {
+                            error_msg = format!("{} {:.}{}", error_msg, element, trail_char);
+                        }
+                        _ => {
+                            error_msg = format!("{} {:.}{}", error_msg, element, trail_char);
+                        }
+                    }
+
+                    // Increment loop counter
+                    counter += 1;
+                }
+
+                // Output concat'd message
+                println!("{}", error_msg);
+
+                // Sanity check: Set flag_input_valid to false to ensure that loop continues
+                flag_input_valid = false;
             }
         }
 
