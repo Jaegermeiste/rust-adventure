@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 libc = "0.2.65"
 crossterm = "0.13.3"
+#num-traits = "0.2.9"
+#num-derive = "0.3.0"

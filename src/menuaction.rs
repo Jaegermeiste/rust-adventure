@@ -18,7 +18,10 @@
 
 **************************************************************************/
 use std::cell::Cell;
+//use num_derive::FromPrimitive;    
+//use num_traits::FromPrimitive;
 
+#[derive(/*FromPrimitive,*/ PartialOrd, PartialEq, Eq, Clone, Debug)]
 pub enum MenuActionType
 {
 	Null,
@@ -79,12 +82,83 @@ impl MenuAction {
             }
     }
 
+    pub fn get_string(&self) -> String {
+        return self.action_text.clone();
+    }
+
     pub fn get_value_int(&self) -> i32 {
-        return self.action_value.get();
+        return self.action_value.clone().get();
+    }
+
+    pub fn get_value_bool(&self) -> bool {
+        if self.action_value.get() >= 1 {
+            return true;
+        }
+
+        return false;
+    }
+
+    pub fn get_value_string(&self) -> String {
+        let mut index : usize = 0;
+
+        if self.overridden {
+            return self.override_string.clone();
+        }
+        else if self.action_type == MenuActionType::StringListOverride {
+            let diff = self.default_value_action.as_ref().unwrap().get_value_int() - self.default_value_action.as_ref().unwrap().get_min_range_value();
+
+            if diff < 0 {
+                index = 0;
+            }
+            else {
+                index = diff as usize;
+            }
+        }
+        else {
+            for i in 0..self.valid_value_list.len() {
+                if *(self.valid_value_list.get(i).expect("Failed to get value.")) == self.action_value.get() {
+                    index = i;
+                }
+            }
+        }
+
+        let mut return_string : String = String::new();
+        return_string.clone_from(self.valid_value_string_list.get(index).expect("Failed to get element."));
+        return return_string;
+    }
+
+    pub fn get_default_value(&self) -> i32 {
+        return self.action_default_value.clone();
+    }
+
+    pub fn get_default_value_string(&self) -> String {
+        let mut index : usize = 0;
+
+        if !self.default_value_action.is_none() {
+            let diff = self.default_value_action.as_ref().unwrap().get_value_int() - self.default_value_action.as_ref().unwrap().get_min_range_value();
+
+            if diff < 0 {
+                index = 0;
+            }
+            else {
+                index = diff as usize;
+            }
+        }
+        else {
+            for i in 0..self.valid_value_list.len() {
+                if *(self.valid_value_list.get(i).expect("Failed to get value.")) == self.action_default_value {
+                    index = i;
+                }
+            }
+        }
+
+        let mut return_string : String = String::new();
+        return_string.clone_from(self.valid_value_string_list.get(index).clone().expect("Failed to find value string."));
+        return return_string;
     }
 
     pub fn get_min_range_value(&self) -> i32 {
-        let mut return_value = 0;
+        let return_value;
 
         if self.min_action.is_none() == false {
             // Since the pointer is not NULL, assume we need to use the referenced value
@@ -98,7 +172,7 @@ impl MenuAction {
     }
 
     pub fn get_max_range_value(&self) -> i32 {
-        let mut return_value = 0;
+        let return_value;
 
         if self.max_action.is_none() == false {
             // Since the pointer is not NULL, assume we need to use the referenced value
@@ -109,6 +183,18 @@ impl MenuAction {
         }
 
         return return_value;
+    }
+
+    pub fn get_type(&self) -> MenuActionType {
+        return self.action_type.clone();
+    }
+
+    pub fn get_allowed_value_list(&self) -> Vec<i32> {
+        return self.valid_value_list.clone();
+    }
+
+    pub fn get_allowed_value_strings(&self) -> Vec<String> {
+        return self.valid_value_string_list.clone();
     }
 
     pub fn set_value_i32(&self, in_value : i32) -> bool {
@@ -135,10 +221,44 @@ impl MenuAction {
             self.action_value.set(in_value);
         }
         else {
-            println!("ERROR: Value {} provided to MenuAction::set_value is outside the legal interval {}-{}, inclusive. Value not set.", in_value, self.get_min_range_value(), self.get_max_range_value());
+            println!(" ERROR: Value {} provided to MenuAction::set_value is outside the legal interval {}-{}, inclusive. Value not set.", in_value, self.get_min_range_value(), self.get_max_range_value());
         }
     
         return success;
+    }
+
+    pub fn set_value_string(&mut self, in_string : &str) -> bool {
+	let mut success : bool = false;
+
+	if self.action_type == MenuActionType::String {
+		// Default is value 0, custom is value 1
+		if self.valid_value_string_list.len() > 1 {
+            let mut value = self.valid_value_string_list.get_mut(1).expect("Failed to get string.");
+            value.clone_from(&in_string.to_string());
+			self.action_value.set(1);
+		}
+		else
+		{
+			self.valid_value_string_list.push(in_string.to_string());
+			self.action_value.set(1);
+		}
+		success = true;
+	}
+	else if self.action_type == MenuActionType::StringListOverride {
+		self.override_string = in_string.to_string();
+		self.overridden = true;
+		success = true;
+	}
+	else
+	{
+		println!(" WARNING: Value {} provided to MenuAction::SetValue is invalid for MenuActionType {}. Value not set.", in_string, self.action_type.clone() as u32);
+	}
+
+	return success;
+}
+
+    pub fn on_selected(&self) -> (MenuActionType, i32) {
+        (self.action_type.clone(), self.action_value.get().clone())
     }
 
     pub fn reset(&self) {

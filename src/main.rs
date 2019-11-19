@@ -19,13 +19,14 @@
 **************************************************************************/
 
 mod input;
-use crate::input::Input;
 mod menu;
-use crate::menu::Menu;
 mod menuaction;
+mod menupage;
+mod game;
+use crate::input::Input;
+use crate::menu::Menu;
 use crate::menuaction::MenuAction;
 use crate::menuaction::MenuActionType;
-mod game;
 use crate::game::Game;
 
 fn main() {
