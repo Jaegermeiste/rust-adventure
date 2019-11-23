@@ -30,7 +30,7 @@ use crate::game::*;
 
 fn main() {
     let mut input           = Input::new();
-    let menu_system         = Menu::new(&mut input);
+    let mut menu_system     = Menu::new(&mut input);
     let main_menu_index     = menu_system.add_page("Main Menu");
     let about_page_index    = menu_system.add_page("About");
     let new_game_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Start New Game",	MenuActionType::Selector));

@@ -22,7 +22,7 @@ use std::fmt;
 use crate::input::*;
 use crate::menuaction::*;
 
-const MAX_MENU_PAGE_OPTIONS : usize =	1024;
+pub const MAX_MENU_PAGE_OPTIONS : usize =	1024;
 
 pub struct MenuPage {
     page_title: String,
@@ -31,7 +31,7 @@ pub struct MenuPage {
 }
 
 impl MenuPage {
-    pub fn new(&self, in_title : &str, in_index : u32) -> MenuPage {
+    pub fn new(in_title : &str, in_index : u32) -> MenuPage {
         MenuPage { 
             page_title: in_title.to_string(),
             menu_items: Vec::new(),
