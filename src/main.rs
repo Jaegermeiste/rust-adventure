@@ -37,7 +37,6 @@ fn main() {
     let new_game_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Start New Game",	MenuActionType::Selector));
     let about_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("About",	        MenuActionType::Selector));
 	let quit_option		    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Exit Program",	MenuActionType::ExitMenu));
-	let mut menu_selection	= 0;
 
     // License attribution
     println!(" rust-adventure (C) 2019 Jason George");
@@ -45,7 +44,7 @@ fn main() {
     println!(" This is free software, and you are welcome to redistribute it under certain conditions; select 'About->Show Redistibution Details' at the menu for details.");
 
     // Display the Main Menu
-	menu_selection = menu_system.run_page(main_menu_index);
+	let mut menu_selection = menu_system.run_page(main_menu_index);
 
 	// Loop so long as we haven't selected to quit
 	while menu_selection != quit_option

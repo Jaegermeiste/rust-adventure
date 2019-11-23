@@ -26,6 +26,9 @@ use crossterm::{
     Result,
 };
 
+pub static DEFAULT_CANCEL_VAL : char =	0x04 as char;   /* EOT */
+pub static MAX_STR_LEN : u32 =	std::u8::MAX as u32;   /* 255 */
+
 #[derive(PartialEq, Eq, Clone)] 
 pub enum InputNumericType
 {
@@ -124,14 +127,14 @@ impl Input {
         return return_value;
     }
 
-    pub fn get_string_from_console(&self, min_chars: u32, max_chars: u32) -> String {
+    pub fn get_string_from_console_bounds(&self, min_chars: u32, max_chars: u32) -> String {
         let mut input_value : String = "".to_string();
         let mut flag_input_valid : bool = false;
         let input = crossterm::input::input();
         self.canceled.set(false);
 
         while flag_input_valid == false {
-            input_value.clear();
+            input_value = "".to_string();
 
             match input.read_line() {
                 Ok(s) => input_value = s,
@@ -152,6 +155,10 @@ impl Input {
         }
 
         return input_value;
+    }
+
+    pub fn get_string_from_console(&self) -> String {
+        return self.get_string_from_console_bounds(0, MAX_STR_LEN);
     }
 
     pub fn get_double_value_from_console(&self, mut lower_bound : f64, mut upper_bound : f64, numeric_type : InputNumericType, cancel_value: char) -> f64 {
@@ -247,7 +254,7 @@ impl Input {
         return input_value;
     }
 
-    pub fn get_double_value_from_console_for_vector (&self, mut allowed_value_list : Vec<f64>, numeric_type : InputNumericType) -> f64 {
+    pub fn get_double_value_from_console_list (&self, mut allowed_value_list : Vec<f64>, numeric_type : InputNumericType) -> f64 {
         let mut	input_value :f64		= std::f64::NAN;
         let mut flag_input_valid : bool	= false;
         let input = crossterm::input::input();
@@ -343,4 +350,22 @@ impl Input {
 
         return input_value;
     }
+
+    pub fn get_signed_integer_value_from_console_range(&self, lower_bound: i32, upper_bound: i32, cancel_val: char) -> i32 {
+	    return self.get_double_value_from_console(lower_bound as f64, upper_bound as f64, InputNumericType::SignedInteger, cancel_val).round() as i32;
+    }
+
+    pub fn get_signed_integer_value_from_console(&self, cancel_val: char) -> i32 {
+	    return self.get_double_value_from_console(std::i32::MIN as f64, std::i32::MAX as f64, InputNumericType::SignedInteger, cancel_val).round() as i32;
+    }
+
+    pub fn get_signed_integer_value_from_console_list (&self, allowed_value_list: Vec<i32>) -> i32 {
+        let mut double_value_list: Vec<f64> = Vec::with_capacity(allowed_value_list.len());
+
+        for element in allowed_value_list.iter() {
+            double_value_list.push(element.clone() as f64);
+        }
+
+        return self.get_double_value_from_console_list(double_value_list, InputNumericType::SignedInteger).round() as i32;
+}
 }

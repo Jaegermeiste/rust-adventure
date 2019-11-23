@@ -227,31 +227,31 @@ impl MenuAction {
         return success;
     }
 
-    pub fn set_value_string(&mut self, in_string : &str) -> bool {
+    pub fn set_value_string<S: Into<String>>(&mut self, in_string : S) -> bool {
 	let mut success : bool = false;
 
 	if self.action_type == MenuActionType::String {
 		// Default is value 0, custom is value 1
 		if self.valid_value_string_list.len() > 1 {
             let mut value = self.valid_value_string_list.get_mut(1).expect("Failed to get string.");
-            value.clone_from(&in_string.to_string());
+            value.clone_from(&in_string.into());
 			self.action_value.set(1);
 		}
 		else
 		{
-			self.valid_value_string_list.push(in_string.to_string());
+			self.valid_value_string_list.push(in_string.into());
 			self.action_value.set(1);
 		}
 		success = true;
 	}
 	else if self.action_type == MenuActionType::StringListOverride {
-		self.override_string = in_string.to_string();
+		self.override_string = in_string.into();
 		self.overridden = true;
 		success = true;
 	}
 	else
 	{
-		println!(" WARNING: Value {} provided to MenuAction::SetValue is invalid for MenuActionType {}. Value not set.", in_string, self.action_type.clone() as u32);
+		println!(" WARNING: Value {} provided to MenuAction::SetValue is invalid for MenuActionType {}. Value not set.", in_string.into(), self.action_type.clone() as u32);
 	}
 
 	return success;
