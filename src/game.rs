@@ -17,7 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use crate::input::Input;
+use crate::input::*;
 
 pub struct Game {
     pub input: *const Input,

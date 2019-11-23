@@ -17,8 +17,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use crate::input::Input;
-use crate::menuaction::MenuAction;
+use crate::input::*;
+use crate::menuaction::*;
 
 pub struct Menu {
     pub input: *const Input,

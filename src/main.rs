@@ -23,11 +23,10 @@ mod menu;
 mod menuaction;
 mod menupage;
 mod game;
-use crate::input::Input;
-use crate::menu::Menu;
-use crate::menuaction::MenuAction;
-use crate::menuaction::MenuActionType;
-use crate::game::Game;
+use crate::input::*;
+use crate::menu::*;
+use crate::menuaction::*;
+use crate::game::*;
 
 fn main() {
     let mut input           = Input::new();
