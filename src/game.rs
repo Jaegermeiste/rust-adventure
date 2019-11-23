@@ -17,16 +17,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use std::rc::Rc;
 use crate::input::*;
 
 pub struct Game {
-    pub input: *const Input,
+    input: Rc<Input>,
 }
 
 impl Game {
-    pub fn new(in_input : &mut Input) -> Game {
+    pub fn new(in_input : &Rc<Input>) -> Game {
         Game { 
-            input: (in_input),
+            input: Rc::clone(&in_input),
             }
     }
     

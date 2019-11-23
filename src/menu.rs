@@ -17,21 +17,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use std::rc::Rc;
 use crate::input::*;
 use crate::menuaction::*;
 use crate::menupage::*;
 
 pub struct Menu {
     menu_pages: Vec<MenuPage>,
-    input: *const Input,
+    input: Rc<Input>,
     current_menu_index: u32,
 }
 
 impl Menu {
-    pub fn new(in_input : &Input) -> Menu {
+    pub fn new(in_input : &Rc<Input>) -> Menu {
         Menu { 
             menu_pages: Vec::new(),
-            input: in_input,
+            input: Rc::clone(&in_input),
             current_menu_index: 0,
             }
     }
@@ -71,5 +72,57 @@ impl Menu {
         return self.run();
     }
     
-    pub fn run(&self) -> u32 {(0)}
+    pub fn run(&mut self) -> u32 {
+        let mut selection = 0;
+        let mut return_val : u32 = std::u32::MAX;
+        let mut action_val = (MenuActionType::Null, -1);
+        let mut	run_loop = true;
+
+        while (self.menu_pages.len() > 0) && (run_loop == true)
+        {
+            // Draw the current menu
+            //print!("{}", self.menu_pages.get(self.current_menu_index as usize).unwrap());
+            self.menu_pages.get(self.current_menu_index as usize).unwrap().draw();
+
+            // Get the selection value from the input validator
+            selection = self.input.get_unsigned_integer_value_from_console_range(1, self.menu_pages.get(self.current_menu_index as usize).unwrap().get_num_items(), DEFAULT_CANCEL_VAL);
+
+            // Compensate for zero indexing shift (i.e. option 1 is really index 0)
+            selection -= 1;
+
+            // Touch the selected MenuAction
+            action_val = self.menu_pages.get_mut(self.current_menu_index as usize).unwrap().select_action(selection, &self.input);
+
+            // Handle the output of the MenuAction as necessary
+            match action_val.0 {
+                MenuActionType::LaunchMenuPage => {
+                self.current_menu_index = action_val.1 as u32;
+                self.current_menu_index /= MAX_MENU_PAGE_OPTIONS as u32;
+                    return_val = (self.current_menu_index * (MAX_MENU_PAGE_OPTIONS as u32)) + selection;
+                },
+
+                MenuActionType::Selector => {
+                    // We have a menu selection, so break out of the loop
+                    run_loop = false;
+
+                    return_val = (self.current_menu_index * (MAX_MENU_PAGE_OPTIONS as u32)) + selection;
+                },
+
+                MenuActionType::ExitMenu => {
+                    // We have a menu selection, so break out of the loop
+                    run_loop = false;
+
+                    return_val = (self.current_menu_index * (MAX_MENU_PAGE_OPTIONS as u32)) + selection;
+                },
+
+                _ => {
+                    // Give the outside system a chance to handle the selection
+                    run_loop = false;
+                    return_val = (self.current_menu_index * (MAX_MENU_PAGE_OPTIONS as u32)) + selection;
+                }
+            }
+        }
+
+        return return_val;
+    }
 }

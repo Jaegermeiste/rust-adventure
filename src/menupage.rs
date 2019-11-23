@@ -57,7 +57,7 @@ impl MenuPage {
         }
     }
     
-    pub fn select_action(&mut self, selection : u32, input : Input) -> (MenuActionType, i32) {
+    pub fn select_action(&mut self, selection : u32, input : &Input) -> (MenuActionType, i32) {
         let mut return_val: (MenuActionType, i32) = (MenuActionType::Null, 0);
         let mut input_value: i32 = 0;
         let mut upper_limit: i32 = 0;
@@ -198,7 +198,7 @@ impl MenuPage {
         return return_val;
     }
 
-    fn draw(&self) {
+    pub fn draw(&self) {
         // Output the menu page title
         println!("\n {}\n", self.page_title);
 

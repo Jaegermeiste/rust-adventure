@@ -29,8 +29,8 @@ use crate::menuaction::*;
 use crate::game::*;
 
 fn main() {
-    let mut input           = Input::new();
-    let mut menu_system     = Menu::new(&mut input);
+    let input               = Input::new();
+    let mut menu_system     = Menu::new(&input);
     let main_menu_index     = menu_system.add_page("Main Menu");
     let about_page_index    = menu_system.add_page("About");
     let new_game_option	    = menu_system.add_action_to_page(main_menu_index, MenuAction::new("Start New Game",	MenuActionType::Selector));
@@ -50,7 +50,7 @@ fn main() {
 	{
 		if menu_selection == new_game_option
 		{
-			let game = Game::new(&mut input);
+			let game = Game::new(&input);
 
 			game.run();
         }

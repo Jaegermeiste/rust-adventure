@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use std::rc::Rc;
 use std::io;
 use std::cell::Cell;
 extern crate crossterm;
@@ -25,6 +26,7 @@ use crossterm::{
     screen::RawScreen,
     Result,
 };
+extern crate lexical;
 
 pub static DEFAULT_CANCEL_VAL : char =	0x04 as char;   /* EOT */
 pub static MAX_STR_LEN : u32 =	std::u8::MAX as u32;   /* 255 */
@@ -41,19 +43,21 @@ pub struct Input {
     canceled    : Cell<bool>,
 }
 
-impl Default for Input {
+impl  Default for Input {
     fn default() -> Input {
-        Input {
+        let input = Input {
             canceled    : Cell::new(false),
-        }
+        };
+        return input;
     }
 }
 
-impl Input {
-    pub fn new() -> Input {
-        Input { 
+impl  Input {
+    pub fn new() -> Rc<Input> {
+        let input = Input { 
             canceled    : Cell::new(false), 
-            }
+            };
+        return Rc::new(input);
     }
 
     pub fn canceled(&self) -> bool {self.canceled.get()}
@@ -200,7 +204,10 @@ impl Input {
                 let _raw = RawScreen::into_raw_mode();  // Go into raw for just this scope
 
                 match input.read_char() {
-                    Ok(c) => test_char = c,
+                    Ok(c) => {
+                        test_char = c;
+                        //println!(" DEBUG: Input test_char: {}", test_char);
+                    },
                     Err(e) => println!("Read Error: {}", e),
                 }
                 
@@ -209,24 +216,44 @@ impl Input {
                     self.canceled.set(true);
                 }
             }
-
+            
             if self.canceled.get() == false {
                 let mut input_line : String = "".to_string();
                 input_line.clear();
 
+                // if the test char was numeric, push it into the string so we don't lose it
+                if ((test_char >= '0') && (test_char <= '9')) || (test_char == '.') {
+                    input_line.push(test_char);
+                }
+                
                 match input.read_line() {
-                    Ok(s) => input_line = s,
+                    Ok(s) => {
+                        input_line.push_str(s.as_str());
+                        //println!(" DEBUG: Input line: {}", input_line);
+                    },
                     Err(e) => println!("Read Error: {}", e),
                 }
 
-                input_value = input_line.parse::<f64>().unwrap();
-            
+                //println!(" DEBUG: Input line: {}", input_line);
 
-                if (input_value != std::f64::NAN) && 
+                //input_value = input_line.parse::<f64>().expect(" Input::get_double_value_from_console failed to get line");
+                let parsed_result = lexical::parse::<f64, _>(input_line.as_str());
+
+                let mut passed_parsing = false;
+                match parsed_result {
+                    Ok(v) => {
+                        input_value = v;
+                        passed_parsing = true;
+                    },
+                    Err(v) => passed_parsing = false,
+                    _ => passed_parsing = false,
+                }
+
+                if  passed_parsing &&
+                    (input_value != std::f64::NAN) && 
                     (input_value >= lower_bound) && 
                     (input_value <= upper_bound) &&
-                    ((numeric_type == InputNumericType::Double) || (input_value.round() == input_value))
-                {
+                    ((numeric_type == InputNumericType::Double) || (input_value.round() == input_value)) {
                     // Set flag_input_valid to true so that loop ends on next go-around
                     flag_input_valid = true;
                 }
@@ -293,10 +320,21 @@ impl Input {
                 Err(e) => println!("Read Error: {}", e),
             }
 
-            input_value = input_line.parse::<f64>().unwrap();
+            //input_value = input_line.parse::<f64>().unwrap();
+            let parsed_result = lexical::parse::<f64, _>(input_line.as_str());
 
-            if input_value != std::f64::NAN
-            {
+            let mut passed_parsing = false;
+            match parsed_result {
+                Ok(v) => {
+                    input_value = v;
+                    passed_parsing = true;
+                },
+                Err(v) => passed_parsing = false,
+                _ => passed_parsing = false,
+            }
+
+            if passed_parsing && 
+            (input_value != std::f64::NAN) {
                 // Input was of the right type, now check it against the allowed value list
                 for element in allowed_value_list.iter() {
                     if input_value == *element {
@@ -367,5 +405,23 @@ impl Input {
         }
 
         return self.get_double_value_from_console_list(double_value_list, InputNumericType::SignedInteger).round() as i32;
-}
+    }
+
+    pub fn get_unsigned_integer_value_from_console_range(&self, lower_bound: u32, upper_bound: u32, cancel_val: char) -> u32 {
+	    return self.get_double_value_from_console(lower_bound as f64, upper_bound as f64, InputNumericType::UnsignedInteger, cancel_val).round() as u32;
+    }
+
+    pub fn get_unsigned_integer_value_from_console(&self, cancel_val: char) -> u32 {
+	    return self.get_double_value_from_console(std::i32::MIN as f64, std::i32::MAX as f64, InputNumericType::UnsignedInteger, cancel_val).round() as u32;
+    }
+
+    pub fn get_unsigned_integer_value_from_console_list (&self, allowed_value_list: Vec<u32>) -> u32 {
+        let mut double_value_list: Vec<f64> = Vec::with_capacity(allowed_value_list.len());
+
+        for element in allowed_value_list.iter() {
+            double_value_list.push(element.clone() as f64);
+        }
+
+        return self.get_double_value_from_console_list(double_value_list, InputNumericType::SignedInteger).round() as u32;
+    }
 }
