@@ -67,7 +67,7 @@ impl Menu {
     }
     
     pub fn run_page(&mut self, in_page_index : u32) -> u32 {
-        self.current_menu_index = in_page_index.clone();
+        self.current_menu_index = in_page_index.clone() / (MAX_MENU_PAGE_OPTIONS as u32);
 
         return self.run();
     }

@@ -22,7 +22,7 @@ use std::io;
 use std::cell::Cell;
 extern crate crossterm;
 use crossterm::{
-    input::{input, InputEvent, KeyEvent},
+    input::{input, KeyEvent},
     screen::RawScreen,
     Result,
 };
