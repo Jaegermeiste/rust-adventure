@@ -50,6 +50,31 @@ impl  ScrollText {
         return scrolltext;
     }
 
+    fn scroll(&mut self, lines : i32) {
+        let mut adjustment = lines;
+        if (lines < 0) && (lines.abs() > (self.scroll_pos as i32)) {
+            adjustment = -(self.scroll_pos as i32);
+        }
+
+        if lines > (self.max_pos as i32) {
+            adjustment = self.max_pos as i32;
+        }
+
+        let target_pos : i32 = (self.scroll_pos as i32) + adjustment;
+        
+        if target_pos < 0 {
+            self.scroll_pos = 0;
+        }
+        else if target_pos > (self.max_pos as i32) {
+            self.scroll_pos = self.max_pos;
+        }
+        else {
+            self.scroll_pos = target_pos as u32;
+        }
+
+        self.print_stored_text();
+    }
+
     fn process_input_event(&mut self, key_event: InputEvent) -> bool {
         match key_event {
             InputEvent::Keyboard(k) => {
@@ -62,10 +87,7 @@ impl  ScrollText {
                             return true;
                         }
                         ' ' => {
-                            if self.scroll_pos < self.max_pos {
-                                self.scroll_pos += self.console_height;
-                            }
-                            self.print_stored_text();
+                            self.scroll(self.console_height as i32 - 2);
                         }
                         _ => {
                             ()
@@ -75,31 +97,16 @@ impl  ScrollText {
                         return true;
                     }
                     KeyEvent::PageUp => {
-                        if self.scroll_pos >= self.console_height {
-                            self.scroll_pos -= self.console_height;
-                        }
-                        else {
-                            self.scroll_pos = 0;
-                        }
-                        self.print_stored_text();
+                        self.scroll(-(self.console_height as i32 - 2));
                     }
                     KeyEvent::PageDown => {
-                        if self.scroll_pos < self.max_pos {
-                            self.scroll_pos += self.console_height;
-                        }
-                        self.print_stored_text();
+                        self.scroll(self.console_height as i32 - 2);
                     }
                     KeyEvent::Up => {
-                        if self.scroll_pos > 0 {
-                            self.scroll_pos -= 1;
-                        }
-                        self.print_stored_text();
+                        self.scroll(-1);
                     }
                     KeyEvent::Down => {
-                        if self.scroll_pos <= self.max_pos {
-                            self.scroll_pos += 1;
-                        }
-                        self.print_stored_text();
+                        self.scroll(1);
                     }
                     _ => {
                         ()
@@ -109,16 +116,10 @@ impl  ScrollText {
             InputEvent::Mouse(m) => match m {
                 MouseEvent::Press(b, _x, _y) => match b {
                     MouseButton::WheelUp => {
-                        if self.scroll_pos > 0 {
-                            self.scroll_pos -= 1;
-                        }
-                        self.print_stored_text();
+                        self.scroll(-1);
                     },
                     MouseButton::WheelDown => {
-                        if self.scroll_pos <= self.max_pos {
-                            self.scroll_pos += 1;
-                        }
-                        self.print_stored_text();
+                        self.scroll(1);
                     },
                     _ => {
                         ()
@@ -165,10 +166,10 @@ impl  ScrollText {
 
         let mut index = 0;
         for line in self.text.lines() {
-            if index < (self.scroll_pos as usize) {
+            /*if index < (self.scroll_pos as usize) {
                 // Do nothing
             }
-            else if index >= ((self.scroll_pos + self.console_height - 1 - 1 /* Instruction line at bottom */) as usize) {
+            else*/ if index >= ((self.scroll_pos + self.console_height - 2) as usize) {
                 // We're past the end
                 break;
             }
@@ -179,7 +180,7 @@ impl  ScrollText {
             index += 1;
         }
 
-        println!("<▲>/<▼> arrows, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return.");
+        println!("{}/{} <▲>/<▼>, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return.", self.scroll_pos, self.max_pos);
     }
 
     pub fn print_text_range(&mut self, in_text : String, row : u32, con_height : u32) {
@@ -190,18 +191,24 @@ impl  ScrollText {
         let mut formatted = wrapper.initial_indent(" ").subsequent_indent(" ").fill(in_text.as_str());
 
         // Pad the bottom of the output as neccesary
-        while (formatted.lines().count() as u32) < (con_height + 1) {
+        while (formatted.lines().count() as u32) < (con_height - 2) {
             formatted.push_str("\n");
         }
 
         // Set internal variables
         self.text = formatted;
         let line_count = self.text.lines().count() as u32;
-        self.max_pos = line_count - con_height;
+        if line_count < con_height {
+            self.max_pos = 0;       // All text fits on one screen
+        }
+        else {
+            self.max_pos = std::cmp::max(line_count, con_height);
+        }
         self.console_height = con_height;
         if row <= self.max_pos {
             self.scroll_pos = row;
         }
+
         else {
             self.scroll_pos = self.max_pos;
         }
