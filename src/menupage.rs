@@ -17,7 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::io::Write;
+use std::io::{Write};
 use std::fmt;
 use crate::input::*;
 use crate::menuaction::*;

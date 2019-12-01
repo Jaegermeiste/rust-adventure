@@ -20,11 +20,14 @@
 use std::io::{stdout, Write};
 extern crate crossterm;
 use crossterm::{
+    execute,
     cursor::{Hide, MoveTo, Show},
     terminal::{Clear, ClearType, SetSize},
     input::{input, InputEvent, KeyEvent, MouseButton, MouseEvent},
     screen::{RawScreen, EnterAlternateScreen, LeaveAlternateScreen},
+    style::{Attribute, Color, SetForegroundColor, SetBackgroundColor, ResetColor},
     queue,
+    Output,
     Result
 };
 extern crate textwrap;
@@ -180,7 +183,15 @@ impl  ScrollText {
             index += 1;
         }
 
-        println!("{}/{} <▲>/<▼>, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return.", self.scroll_pos, self.max_pos);
+        //println!("{}/{} <▲>/<▼>, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return.", self.scroll_pos, self.max_pos);
+        let nav_bar = format!(" {:03}/{:03} <▲>/<▼>, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return ", self.scroll_pos, self.max_pos);
+        execute!(
+            stdout,
+            SetForegroundColor(Color::Black),
+            SetBackgroundColor(Color::White),
+            Output(nav_bar),
+            ResetColor
+        );
     }
 
     pub fn print_text_range(&mut self, in_text : String, row : u32, con_height : u32) {
@@ -218,7 +229,7 @@ impl  ScrollText {
         _result = queue!(stdout, Hide);
         _result = queue!(stdout, MoveTo(0, con_height as u16));
         _result = queue!(stdout, Clear(ClearType::FromCursorDown));
-        //_result = queue!(stdout, SetSize(DEFAULT_TERMINAL_WIDTH, con_height));
+        _result = queue!(stdout, SetSize(DEFAULT_TERMINAL_WIDTH, con_height as u16));
         let mut _result2 = stdout.flush();
 
         self.print_stored_text();
