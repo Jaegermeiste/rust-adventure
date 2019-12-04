@@ -17,25 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::rc::Rc;
-use crate::input::*;
-mod castle;
-mod gameobject;
-use crate::game::castle::*;
-
-pub struct Game {
-    input: Rc<Input>,
-
-    castle: Castle,
-}
-
-impl Game {
-    pub fn new(in_input : &Rc<Input>) -> Game {
-        Game { 
-            input: Rc::clone(&in_input),
-            castle: Castle::new(),
-            }
-    }
-    
-    pub fn run(&self) {}
+pub trait GameObject {
+    fn name(&self) -> String ;
+    fn flavor_text(&self) -> String;
 }

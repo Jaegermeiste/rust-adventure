@@ -17,25 +17,34 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::rc::Rc;
-use crate::input::*;
-mod castle;
-mod gameobject;
-use crate::game::castle::*;
+use crate::game::gameobject::*;
 
-pub struct Game {
-    input: Rc<Input>,
+pub static CASTLE_NAME          : &str  = "Castle Wolfenstein";
+pub static CASTLE_FLAVOR_TEXT   : &str  = " Heavily worn, this bag is made of a pliant leather of unknown origin.";
 
-    castle: Castle,
+pub static CASTLE_WIDTH         : usize = 5;
+pub static CASTLE_HEIGHT        : usize = 7;
+
+pub struct Castle {
+    name: String,
+    flavor_text: String,
 }
 
-impl Game {
-    pub fn new(in_input : &Rc<Input>) -> Game {
-        Game { 
-            input: Rc::clone(&in_input),
-            castle: Castle::new(),
-            }
+impl Castle {
+    pub fn new() -> Castle {
+        Castle{ 
+            name: CASTLE_NAME.to_string(),
+            flavor_text: CASTLE_FLAVOR_TEXT.to_string(),
+        }
     }
-    
-    pub fn run(&self) {}
+}
+
+impl GameObject for Castle {
+    fn name(&self) -> String {
+        return self.name.clone();
+    }
+
+    fn flavor_text(&self) -> String {
+        return self.flavor_text.clone();
+    }
 }
