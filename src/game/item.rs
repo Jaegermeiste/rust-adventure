@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use crate::game::gameobject::*;
 
 enum ItemProperty {
 	None,
@@ -36,7 +37,7 @@ enum ItemType {
 
 pub static	DEFAULT_ITEM_WEIGHT : u32 =	1;
 
-pub trait Item {
+pub trait Item: GameObject {
     fn  get_item_weight     (&self) -> u32;
     fn  get_item_property   (&self) -> ItemProperty;
     fn  get_item_type       (&self) -> ItemType;

@@ -29,8 +29,7 @@ pub static CASTLE_HEIGHT        : usize = 7;
 
 pub struct Castle {
     // GameObject
-    name        : String,
-    flavor_text : String,
+    game_object_data    : GameObjectData,
 
     // Castle
     spaces      : Vec<Rc<Space>>,
@@ -39,19 +38,10 @@ pub struct Castle {
 impl Castle {
     pub fn new() -> Castle {
         Castle{ 
-            name        : CASTLE_NAME.to_string(),
-            flavor_text : CASTLE_FLAVOR_TEXT.to_string(),
+            game_object_data : GameObjectData::default(),
             spaces      : Vec::new(),
         }
     }
 }
 
-impl GameObject for Castle {
-    fn name(&self) -> String {
-        return self.name.clone();
-    }
-
-    fn flavor_text(&self) -> String {
-        return self.flavor_text.clone();
-    }
-}
+crate::impl_GameObject!(Castle);

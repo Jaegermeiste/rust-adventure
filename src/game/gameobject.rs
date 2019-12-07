@@ -17,6 +17,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+pub struct GameObjectData {
+    pub name        : String,
+    pub flavor_text : String,
+}
+
+impl Default for GameObjectData {
+    fn default() -> GameObjectData {
+        let data = GameObjectData {
+            name        :   "Default Name".to_string(),
+            flavor_text :   "Default Flavor Text".to_string(),
+        };
+        return data;
+    }
+}
+
 pub trait GameObject {
     fn name         (&self) -> String;
     fn flavor_text  (&self) -> String;
@@ -27,11 +42,11 @@ macro_rules! impl_GameObject {
     ($T:ident) => {
         impl GameObject for $T {
             fn name(&self) -> String {
-                 return self->name.clone(); 
+                 return self.game_object_data.name.clone(); 
             }
 
             fn flavor_text(&self) -> String {
-                return self->flavor_text.clone(); 
+                return self.game_object_data.flavor_text.clone(); 
            }
         }
     }

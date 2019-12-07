@@ -22,8 +22,13 @@ use crate::game::gameobject::*;
 use crate::game::item::*;
 
 pub struct Backpack {
+    // GameObject
+    game_object_data    : GameObjectData,
+    
     items           :   Vec<Rc<dyn Item>>,
 
     weapon_index    :   u32,
     shield_index    :   u32,
 }
+
+crate::impl_GameObject!(Backpack);
