@@ -21,7 +21,7 @@ use std::rc::Rc;
 use crate::game::gameobject::*;
 use crate::game::backpack::*;
 
-pub static	SPACE_DEFAULT_SPECIAL_ACTION_TEXT : &str =	"Turn Lights On";
+static	SPACE_DEFAULT_SPECIAL_ACTION_TEXT : &str =	"Turn Lights On";
 
 pub enum SpaceType {
 	None,
@@ -34,6 +34,44 @@ pub enum SpaceType {
 	Dormitory,
 	Dungeon,
 	NumTypes
+}
+
+pub struct SpaceData {
+    pub right                       : Option<Rc<dyn Space>>,
+    pub left                        : Option<Rc<dyn Space>>,
+    pub top                         : Option<Rc<dyn Space>>,
+    pub bottom                      : Option<Rc<dyn Space>>,
+
+    pub x_coord                     : u32,
+    pub y_coord                     : u32,
+
+    pub special_action_text         : String,
+    pub special_action_performed    : bool,
+
+    pub pack                        : Backpack,
+
+    pub movement_enabled            : bool,
+
+    pub space_type                  : SpaceType,
+}
+
+impl Default for SpaceData {
+    fn default() -> SpaceData {
+        let data = SpaceData {
+            right                       :   None,
+            left                        :   None,
+            top                         :   None,
+            bottom                      :   None,
+            x_coord                     :   0,
+            y_coord                     :   0,
+            special_action_text         :   SPACE_DEFAULT_SPECIAL_ACTION_TEXT.to_string(),
+            special_action_performed    :   false,
+            pack                        :   Backpack::new(),
+            movement_enabled            :   true,
+            space_type                  :   SpaceType::None,
+        };
+        return data;
+    }
 }
 
 pub trait Space: GameObject {
@@ -62,5 +100,5 @@ pub trait Space: GameObject {
 
     fn get_space_type           (&self)                             -> SpaceType;
 
-    fn get_pack                 (&self);                            //-> Rc<Backpack>;
+    fn get_pack                 (&self)                             -> Rc<Backpack>;
 }

@@ -19,13 +19,15 @@
 **************************************************************************/
 use crate::game::gameobject::*;
 
-enum ItemProperty {
+#[derive(PartialOrd, PartialEq, Eq, Copy, Clone, Debug)]
+pub enum ItemProperty {
 	None,
 	Droppable,
 	Max
 }
 
-enum ItemType {
+#[derive(PartialOrd, PartialEq, Eq, Copy, Clone, Debug)]
+pub enum ItemType {
 	Default,
 	Weapon,
 	Shield,
@@ -37,8 +39,44 @@ enum ItemType {
 
 pub static	DEFAULT_ITEM_WEIGHT : u32 =	1;
 
+pub struct ItemData {
+    pub weight      : u32,
+    pub property    : ItemProperty,
+    pub item_type   : ItemType,
+}
+
+impl Default for ItemData {
+    fn default() -> ItemData {
+        let data = ItemData {
+            weight      :   DEFAULT_ITEM_WEIGHT,
+            property    :   ItemProperty::None,
+            item_type   :   ItemType::Default,
+        };
+        return data;
+    }
+}
+
 pub trait Item: GameObject {
     fn  get_item_weight     (&self) -> u32;
     fn  get_item_property   (&self) -> ItemProperty;
     fn  get_item_type       (&self) -> ItemType;
+}
+
+#[macro_export]
+macro_rules! impl_Item { 
+    ($T:ident) => {
+        impl Item for $T {
+            fn get_item_weight(&self) -> u32 {
+                 return self.item_data.weight; 
+            }
+
+            fn get_item_property(&self) -> ItemProperty {
+                return self.item_data.property; 
+            }
+
+            fn get_item_type(&self) -> ItemType {
+                return self.item_data.item_type; 
+            }
+        }
+    }
 }

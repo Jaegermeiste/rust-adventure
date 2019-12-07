@@ -22,7 +22,37 @@ use crate::game::item::*;
 pub static	WEAPON_DEFAULT_ATTACK_POINTS    : u32 = 1;
 pub static	WEAPON_DEFAULT_ATTACK_MODE_TEXT : &str = "attacks";
 
+pub struct WeaponData {
+    pub attack_points       : u32,
+    pub attack_mode_text    : String,
+}
+
+impl Default for WeaponData {
+    fn default() -> WeaponData {
+        let data = WeaponData {
+            attack_points       :   WEAPON_DEFAULT_ATTACK_POINTS,
+            attack_mode_text    :   WEAPON_DEFAULT_ATTACK_MODE_TEXT.to_string(),
+        };
+        return data;
+    }
+}
+
 pub trait Weapon: Item {
     fn  get_attack_points       (&self) -> u32;
     fn  get_attack_mode_text    (&self) -> String;
+}
+
+#[macro_export]
+macro_rules! impl_Weapon { 
+    ($T:ident) => {
+        impl Weapon for $T {
+            fn get_attack_points(&self) -> u32 {
+                 return self.weapon_data.attack_points; 
+            }
+
+            fn get_attack_mode_text(&self) -> String {
+                return self.weapon_data.attack_mode_text.clone(); 
+            }
+        }
+    }
 }

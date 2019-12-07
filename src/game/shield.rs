@@ -22,7 +22,37 @@ use crate::game::item::*;
 pub static	SHIELD_DEFAULT_DEFENSE_POINTS       : u32   = 1;
 pub static	SHIELD_DEFAULT_DEFENSE_MODE_TEXT    : &str  = "blocks";
 
+pub struct ShieldData {
+    pub defense_points       : u32,
+    pub defense_mode_text    : String,
+}
+
+impl Default for ShieldData {
+    fn default() -> ShieldData {
+        let data = ShieldData {
+            defense_points       :   SHIELD_DEFAULT_DEFENSE_POINTS,
+            defense_mode_text    :   SHIELD_DEFAULT_DEFENSE_MODE_TEXT.to_string(),
+        };
+        return data;
+    }
+}
+
 pub trait Shield: Item {
     fn  get_defense_points      (&self) -> u32;
     fn  get_defense_mode_text   (&self) -> String;
+}
+
+#[macro_export]
+macro_rules! impl_Shield { 
+    ($T:ident) => {
+        impl Shield for $T {
+            fn get_defense_points(&self) -> u32 {
+                 return self.shield_data.defense_points; 
+            }
+
+            fn get_defense_mode_text(&self) -> String {
+                return self.shield_data.defense_mode_text.clone(); 
+            }
+        }
+    }
 }

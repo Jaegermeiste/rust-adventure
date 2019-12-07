@@ -29,6 +29,8 @@ mod item;
 mod weapon;
 mod shield;
 mod backpack;
+mod rattooth;
+mod buckler;
 use crate::game::castle::*;
 
 pub struct Game {
