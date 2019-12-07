@@ -18,6 +18,8 @@
 
 **************************************************************************/
 use std::rc::Rc;
+use crate::game::gameobject::*;
+use crate::game::backpack::*;
 
 pub static	SPACE_DEFAULT_SPECIAL_ACTION_TEXT : &str =	"Turn Lights On";
 
@@ -34,7 +36,7 @@ pub enum SpaceType {
 	NumTypes
 }
 
-pub trait Space {
+pub trait Space: GameObject {
     fn set_right                (&self, in_right : &Rc<dyn Space>);
     fn set_left                 (&self, in_right : &Rc<dyn Space>);
     fn set_top                  (&self, in_right : &Rc<dyn Space>);

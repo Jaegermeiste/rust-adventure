@@ -22,6 +22,10 @@ use crate::input::*;
 mod castle;
 mod gameobject;
 mod space;
+mod item;
+mod weapon;
+mod shield;
+mod backpack;
 use crate::game::castle::*;
 
 pub struct Game {

@@ -17,22 +17,27 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub trait GameObject {
-    fn name         (&self) -> String;
-    fn flavor_text  (&self) -> String;
+
+enum ItemProperty {
+	None,
+	Droppable,
+	Max
 }
 
-#[macro_export]
-macro_rules! impl_GameObject { 
-    ($T:ident) => {
-        impl GameObject for $T {
-            fn name(&self) -> String {
-                 return self->name.clone(); 
-            }
+enum ItemType {
+	Default,
+	Weapon,
+	Shield,
+	Health,
+	ThroneRoomKey,
+	GameWin,
+	Max
+}
 
-            fn flavor_text(&self) -> String {
-                return self->flavor_text.clone(); 
-           }
-        }
-    }
+pub static	DEFAULT_ITEM_WEIGHT : u32 =	1;
+
+pub trait Item {
+    fn  get_item_weight     (&self) -> u32;
+    fn  get_item_property   (&self) -> ItemProperty;
+    fn  get_item_type       (&self) -> ItemType;
 }

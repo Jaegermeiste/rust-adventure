@@ -17,22 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub trait GameObject {
-    fn name         (&self) -> String;
-    fn flavor_text  (&self) -> String;
-}
+use crate::game::item::*;
 
-#[macro_export]
-macro_rules! impl_GameObject { 
-    ($T:ident) => {
-        impl GameObject for $T {
-            fn name(&self) -> String {
-                 return self->name.clone(); 
-            }
+pub static	SHIELD_DEFAULT_DEFENSE_POINTS       : u32   = 1;
+pub static	SHIELD_DEFAULT_DEFENSE_MODE_TEXT    : &str  = "blocks";
 
-            fn flavor_text(&self) -> String {
-                return self->flavor_text.clone(); 
-           }
-        }
-    }
+pub trait Shield: Item {
+    fn  get_defense_points      (&self) -> u32;
+    fn  get_defense_mode_text   (&self) -> String;
 }

@@ -17,22 +17,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub trait GameObject {
-    fn name         (&self) -> String;
-    fn flavor_text  (&self) -> String;
-}
+use std::rc::Rc;
+use crate::game::gameobject::*;
+use crate::game::item::*;
 
-#[macro_export]
-macro_rules! impl_GameObject { 
-    ($T:ident) => {
-        impl GameObject for $T {
-            fn name(&self) -> String {
-                 return self->name.clone(); 
-            }
+pub struct Backpack {
+    items           :   Vec<Rc<dyn Item>>,
 
-            fn flavor_text(&self) -> String {
-                return self->flavor_text.clone(); 
-           }
-        }
-    }
+    weapon_index    :   u32,
+    shield_index    :   u32,
 }
