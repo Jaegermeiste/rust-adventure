@@ -18,7 +18,6 @@
 
 **************************************************************************/
 pub trait GameObject {
-    fn name(&self) -> String ;
-    fn flavor_text(&self) -> String;
-    
+    fn name         (&self) -> String;
+    fn flavor_text  (&self) -> String;
 }

@@ -21,6 +21,7 @@ use std::rc::Rc;
 use crate::input::*;
 mod castle;
 mod gameobject;
+mod space;
 use crate::game::castle::*;
 
 pub struct Game {

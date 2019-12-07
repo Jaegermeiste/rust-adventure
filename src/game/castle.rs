@@ -17,7 +17,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use std::rc::Rc;
 use crate::game::gameobject::*;
+use crate::game::space::*;
 
 pub static CASTLE_NAME          : &str  = "Castle Wolfenstein";
 pub static CASTLE_FLAVOR_TEXT   : &str  = " Heavily worn, this bag is made of a pliant leather of unknown origin.";
@@ -26,15 +28,20 @@ pub static CASTLE_WIDTH         : usize = 5;
 pub static CASTLE_HEIGHT        : usize = 7;
 
 pub struct Castle {
-    name: String,
-    flavor_text: String,
+    // GameObject
+    name        : String,
+    flavor_text : String,
+
+    // Castle
+    spaces      : Vec<Rc<Space>>,
 }
 
 impl Castle {
     pub fn new() -> Castle {
         Castle{ 
-            name: CASTLE_NAME.to_string(),
-            flavor_text: CASTLE_FLAVOR_TEXT.to_string(),
+            name        : CASTLE_NAME.to_string(),
+            flavor_text : CASTLE_FLAVOR_TEXT.to_string(),
+            spaces      : Vec::new(),
         }
     }
 }

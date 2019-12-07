@@ -22,8 +22,7 @@ use std::cell::Cell;
 //use num_traits::FromPrimitive;
 
 #[derive(/*FromPrimitive,*/ PartialOrd, PartialEq, Eq, Clone, Debug)]
-pub enum MenuActionType
-{
+pub enum MenuActionType {
 	Null,
 	Selector,
 	LaunchMenuPage,
