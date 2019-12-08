@@ -24,7 +24,7 @@ use crate::game::gameobject::*;
 pub enum ItemProperty {
 	None,
 	Droppable,
-	Max
+	// Max
 }
 
 #[derive(PartialOrd, PartialEq, Eq, Copy, Clone, Debug)]
@@ -35,7 +35,7 @@ pub enum ItemType {
 	Health,
 	ThroneRoomKey,
 	GameWin,
-	Max
+	// Max
 }
 
 pub static	DEFAULT_ITEM_WEIGHT : u32 =	1;

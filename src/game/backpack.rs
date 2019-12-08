@@ -18,13 +18,10 @@
 
 **************************************************************************/
 use std::rc::Rc;
-use traitcast::{traitcast};
 use crate::game::gameobject::*;
 use crate::game::item::*;
 use crate::game::weapon::*;
-use crate::game::rattooth::*;
 use crate::game::shield::*;
-use crate::game::buckler::*;
 
 static	BACKPACK_NAME			: &str = "Satchel of Holding";
 static  BACKPACK_FLAVOR_TEXT	: &str = " Heavily worn, this bag is made of a pliant leather of unknown origin.";

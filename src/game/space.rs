@@ -33,7 +33,7 @@ pub enum SpaceType {
 	Bedroom,
 	Dormitory,
 	Dungeon,
-	NumTypes
+	// NumTypes
 }
 
 pub struct SpaceData {
