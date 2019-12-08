@@ -29,10 +29,9 @@ use crate::menu::*;
 use crate::menuaction::*;
 use crate::game::*;
 use crate::scrolltext::*;
-use std::rc::Rc;
 use std::io::{stdout, Write};
 use crossterm::{
-    terminal::{size, SetSize},
+    terminal::{SetSize},
     execute,
 };
 

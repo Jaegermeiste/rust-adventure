@@ -232,7 +232,7 @@ impl MenuAction {
 	if self.action_type == MenuActionType::String {
 		// Default is value 0, custom is value 1
 		if self.valid_value_string_list.len() > 1 {
-            let mut value = self.valid_value_string_list.get_mut(1).expect("Failed to get string.");
+            let value = self.valid_value_string_list.get_mut(1).expect("Failed to get string.");
             value.clone_from(&in_string.into());
 			self.action_value.set(1);
 		}

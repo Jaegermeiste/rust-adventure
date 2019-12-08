@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use traitcast::{TraitcastFrom};
 use crate::game::gameobject::*;
 
 #[derive(PartialOrd, PartialEq, Eq, Copy, Clone, Debug)]
@@ -56,10 +57,18 @@ impl Default for ItemData {
     }
 }
 
-pub trait Item: GameObject {
-    fn  get_item_weight     (&self) -> u32;
-    fn  get_item_property   (&self) -> ItemProperty;
-    fn  get_item_type       (&self) -> ItemType;
+pub trait Item: GameObject + TraitcastFrom {
+    fn  get_item_weight         (&self) -> u32;
+    fn  get_item_property       (&self) -> ItemProperty;
+    fn  get_item_type           (&self) -> ItemType;
+
+    /*
+    // HACK : Work around Rust's lack of trait reflection/conversion at runtime
+    fn  get_item_action_points  (&self) -> u32;
+    fn  get_item_action_text    (&self) -> String;
+    fn  as_weapon               (&self) -> Option<Rc<&dyn Weapon>>;
+    fn  as_shield               (&self) -> Option<Rc<&dyn Shield>>;
+    */
 }
 
 #[macro_export]
@@ -77,6 +86,24 @@ macro_rules! impl_Item {
             fn get_item_type(&self) -> ItemType {
                 return self.item_data.item_type; 
             }
+
+            /*
+            fn get_item_action_points  (&self) -> u32 {
+                return u32::max_value();
+            }
+
+            fn get_item_action_text    (&self) -> String {
+                return "This should be overridden.".to_string();
+            }
+
+            fn as_weapon (&self) -> Option<Rc<&dyn crate::game::weapon::Weapon>> {
+                return Option::None;
+            }
+
+            fn as_shield (&self) -> Option<Rc<&dyn crate::game::shield::Shield>> {
+                return Option::None;
+            }
+            */
         }
     }
 }

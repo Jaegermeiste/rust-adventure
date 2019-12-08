@@ -17,7 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::rc::Rc;
+use traitcast::{traitcast};
 use crate::game::gameobject::*;
 use crate::game::item::*;
 use crate::game::shield::*;
@@ -39,8 +39,6 @@ pub struct Buckler {
     shield_data         : ShieldData,
 }
 
-crate::impl_GameObject!(Buckler);
-crate::impl_Item!(Buckler);
 crate::impl_Shield!(Buckler);
 
 impl  Default for Buckler {

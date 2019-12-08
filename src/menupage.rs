@@ -224,7 +224,7 @@ impl MenuPage {
 
         // No line return
         print!("\n Please make a menu selection from 1 to {}: ", self.menu_items.len());
-        std::io::stdout().flush();
+        let _result = std::io::stdout().flush();
     }
 
     pub fn clear (&mut self) {

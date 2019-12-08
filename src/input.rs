@@ -60,7 +60,9 @@ impl  Input {
         return Rc::new(input);
     }
 
-    pub fn canceled(&self) -> bool {self.canceled.get()}
+    pub fn canceled(&self) -> bool {
+        self.canceled.get()
+    }
 
     pub fn get_keypress_from_console(&self) -> char
     {

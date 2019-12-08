@@ -18,6 +18,7 @@
 
 **************************************************************************/
 use std::rc::Rc;
+use traitcast::{traitcast};
 use crate::game::gameobject::*;
 use crate::game::item::*;
 use crate::game::weapon::*;
@@ -53,62 +54,241 @@ impl Backpack {
     }
 
     pub fn  add_item(&mut self, item : Rc<dyn Item>) {
-
+        if Rc::strong_count(&item) > 0 {
+            self.items.push(item);
+        }
     }
 
-    pub fn  add_item_list (&mut self, item : Vec<Rc<dyn Item>>) {
+    pub fn  add_item_list (&mut self, item_list : Vec<Rc<dyn Item>>) {
+        for item in item_list {
+            self.add_item(item);
 
+        }
     }
 
     pub fn  print_items (&self) {
+        for (index, item_ref) in self.items.iter().enumerate() {
+            let item = item_ref.as_ref();
 
+            // Print basic info
+            print!("     {}) {}     Weight: {}     ", (index + 1), item.name(), item.get_item_weight());
+    
+            // Print details as appropriate
+            if item.get_item_type() == ItemType::Weapon {
+                print!("Equippable as Weapon.");
+            }
+            else if item.get_item_type() == ItemType::Shield {
+                print!("Equippable as Shield.");
+            }
+    
+            if item.get_item_property() != ItemProperty::Droppable {
+                print!(" Not transferable.");
+            }
+    
+            // Print Flavor Text
+            println!("     {}", item.flavor_text()); 
+        }
     }
 
-    pub fn  drop_item   (&self, index : u32) -> Rc<dyn Item> {
-        return Rc::new(RatTooth::default());        // FIXME
+    pub fn  drop_item   (&mut self, index : u32) -> Option<Rc<dyn Item>> {
+        let drop_item = self.items.get(index as usize).unwrap();
+
+        if drop_item.get_item_property() == ItemProperty::Droppable {
+            let removed = self.items.remove(index as usize);	// Remove the element
+    
+            // Adjust indices
+            if self.weapon_index > index {
+                self.weapon_index -= 1;
+            }
+    
+            if self.shield_index > index {
+                self.shield_index -= 1;
+            }
+
+            return Option::Some(removed);
+        }
+        else {
+            println!(" {} cannot be dropped or transferred.", drop_item.name());
+        }
+        return Option::None;
     }
 
     pub fn  get_droppable_item_list (&self) -> Vec<Rc<dyn Item>> {
-        return self.items.clone();       // FIXME
+        let mut drop_list : Vec<Rc<dyn Item>> = Vec::new();
+
+        for item in self.items.iter() {
+            if item.get_item_property() == ItemProperty::Droppable {
+                drop_list.push(item.clone());
+            }
+        }
+
+        return drop_list;
     }
 
-    pub fn  drop_first_item_of_type   (&self, item_type : ItemType) -> Rc<dyn Item> {
-        return Rc::new(RatTooth::default());        // FIXME
+    pub fn  drop_first_item_of_type   (&mut self, item_type : ItemType) -> Option<Rc<dyn Item>> {
+        for (index, item) in self.items.iter().enumerate() {
+            if item.get_item_type() == item_type {
+                return self.drop_item(index as u32);
+            }
+        }
+
+        return Option::None;
     }
 
     pub fn  print_weapons (&self) {
+        println!(" Weapons Inventory:");
 
+        for (index, item) in self.items.iter().enumerate() {
+            if item.get_item_type() == ItemType::Weapon {
+                if traitcast::implements_trait::<dyn Item, dyn Weapon>(item.as_ref()) {
+                    let weapon = traitcast::cast_ref::<dyn Item, dyn Weapon>(item.as_ref()).expect("Failed to unwrap Weapon");
+
+                    println!("     {}) {}     Weight: {}     {} Equippable as Weapon with Attack = ", (index + 1), item.name(), item.get_item_weight(), weapon.get_attack_points());
+                    println!("         {}", item.flavor_text());
+                }
+            }
+        }
     }
 
-    pub fn  set_weapon (&self, index : u32, verbose : bool) {
+    pub fn  set_weapon (&mut self, index : u32, verbose : bool) {
+        // Verify valid index
+        if index < (self.items.len() as u32)
+        {
+            let item = self.items.get(index as usize).unwrap();
 
+            // Verify item at index is weapon
+            if item.get_item_type() == ItemType::Weapon {
+                if traitcast::implements_trait::<dyn Item, dyn Weapon>(item.as_ref()) {
+                    let weapon = traitcast::cast_ref::<dyn Item, dyn Weapon>(item.as_ref()).expect("Failed to unwrap Weapon");
+
+                    self.weapon_index = index;
+
+                    if verbose {
+                        println!(" Weapon set to {} with Attack = {}", weapon.name(), weapon.get_attack_points());
+                    }
+                }
+            }
+            else {
+                println!(" Selected inventory Item cannot be equipped as a Weapon.");
+            }
+        }
+        else {
+            println!(" Invalid selection.");
+        }
     }
 
-    pub fn  get_current_weapon (&self) -> Rc<dyn Weapon> {
-        return Rc::new(RatTooth::default());        // FIXME
+    pub fn  get_current_weapon (&self) -> Option<Rc<&dyn Weapon>> {
+        let mut option : Option<Rc<&dyn Weapon>> = Option::None;
+
+        if (self.weapon_index < self.items.len() as u32) && 
+            (self.items.get(self.weapon_index as usize).unwrap().get_item_type() == ItemType::Weapon) {
+            
+                let item = self.items.get(self.weapon_index as usize).unwrap();
+                if traitcast::implements_trait::<dyn Item, dyn Weapon>(item.as_ref()) {
+                    let weapon = Rc::new(traitcast::cast_ref::<dyn Item, dyn Weapon>(item.as_ref()).expect("Failed to unwrap Weapon"));
+                    option = Option::Some(weapon);
+                }
+        }
+
+        if option.is_none() {
+            println!(" No weapon currently selected.");
+        }
+
+        return option;
     }
 
     pub fn  print_shields (&self) {
+        println!(" Shields Inventory:");
 
+        for (index, item) in self.items.iter().enumerate() {
+            if item.get_item_type() == ItemType::Shield {
+                if traitcast::implements_trait::<dyn Item, dyn Shield>(item.as_ref()) {
+                    let shield = traitcast::cast_ref::<dyn Item, dyn Shield>(item.as_ref()).expect("Failed to unwrap Shield");
+
+                    println!("     {}) {}     Weight: {}     {} Equippable as Shield with Defense = ", (index + 1), item.name(), item.get_item_weight(), shield.get_defense_points());
+                    println!("         {}", item.flavor_text());
+                }
+            }
+        }
     }
 
-    pub fn  set_shield (&self, index : u32, verbose : bool) {
+    pub fn  set_shield (&mut self, index : u32, verbose : bool) {
+        // Verify valid index
+        if index < (self.items.len() as u32)
+        {
+            let item = self.items.get(index as usize).unwrap();
 
+            // Verify item at index is shield
+            if item.get_item_type() == ItemType::Shield {
+                if traitcast::implements_trait::<dyn Item, dyn Shield>(item.as_ref()) {
+                    let shield = traitcast::cast_ref::<dyn Item, dyn Shield>(item.as_ref()).expect("Failed to unwrap Shield");
+
+                    self.shield_index = index;
+
+                    if verbose {
+                        println!(" Shield set to {} with Defense = {}", shield.name(), shield.get_defense_points());
+                    }
+                }
+            }
+            else {
+                println!(" Selected inventory Item cannot be equipped as a Shield.");
+            }
+        }
+        else {
+            println!(" Invalid selection.");
+        }
     }
 
-    pub fn  get_current_shield (&self) -> Rc<dyn Shield> {
-        return Rc::new(Buckler::default());        // FIXME
+    pub fn  get_current_shield (&self) -> Option<Rc<&dyn Shield>> {
+        let mut option : Option<Rc<&dyn Shield>> = Option::None;
+
+        if (self.shield_index < self.items.len() as u32) && 
+            (self.items.get(self.shield_index as usize).unwrap().get_item_type() == ItemType::Shield) {
+            
+                let item = self.items.get(self.shield_index as usize).unwrap();
+                if traitcast::implements_trait::<dyn Item, dyn Shield>(item.as_ref()) {
+                    let shield = Rc::new(traitcast::cast_ref::<dyn Item, dyn Shield>(item.as_ref()).expect("Failed to unwrap Shield"));
+                    option = Option::Some(shield);
+                }
+        }
+
+        /*if option.is_none() {
+            println!(" No shield currently selected.");
+        }*/
+
+        return option;
     }
 
     pub fn  is_overweight (&self) -> bool {
-        return false;       // FIXME
+        let mut overweight = false;
+        let mut weight = 0;
+
+        // Sum the weight
+        for item in self.items.iter() {
+            weight += item.get_item_weight();
+        }
+
+        if weight > BACKPACK_MAX_WEIGHT {
+            overweight = true;
+        }
+
+        return overweight;
     }
 
     pub fn  item_type_exists (&self, item_type : ItemType) -> bool {
-        return false;       // FIXME
+        let mut found = false;
+
+        for item in self.items.iter() {
+            if item.get_item_type() == item_type {
+                found = true;
+                break;  // Early out
+            }
+        }
+
+        return found;
     }
 
     pub fn  get_size (&self) -> u32{
-        return 0;           // FIXME
+        return self.items.len() as u32;
     }
 }

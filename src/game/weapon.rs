@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use traitcast::{/*traitcast,*/ TraitcastFrom};
 use crate::game::item::*;
 
 pub static	WEAPON_DEFAULT_ATTACK_POINTS    : u32 = 1;
@@ -37,7 +38,7 @@ impl Default for WeaponData {
     }
 }
 
-pub trait Weapon: Item {
+pub trait Weapon: Item  + TraitcastFrom {
     fn  get_attack_points       (&self) -> u32;
     fn  get_attack_mode_text    (&self) -> String;
 }
@@ -45,6 +46,45 @@ pub trait Weapon: Item {
 #[macro_export]
 macro_rules! impl_Weapon { 
     ($T:ident) => {
+        crate::impl_GameObject!($T);
+
+        crate::impl_Item!($T);
+
+/*
+        // HACK: Work around language limitation regarding trait conversions/casting
+        impl Item for $T {
+            fn get_item_weight(&self) -> u32 {
+                return self.item_data.weight; 
+            }
+
+            fn get_item_property(&self) -> ItemProperty {
+                return self.item_data.property; 
+            }
+
+            fn get_item_type(&self) -> ItemType {
+                return self.item_data.item_type; 
+            }
+
+            fn get_item_action_points  (&self) -> u32 {
+                return self.get_attack_points();
+            }
+
+            fn get_item_action_text    (&self) -> String {
+                return self.get_attack_mode_text();
+            }
+
+            fn as_weapon (&self) -> Option<Rc<&dyn Weapon>> {
+                let option = Some(Rc::new(self as &dyn Weapon));
+
+                return option;
+            }
+
+            fn as_shield (&self) -> Option<Rc<&dyn crate::game::shield::Shield>> {
+                return Option::None;
+            }
+        }
+*/
+
         impl Weapon for $T {
             fn get_attack_points(&self) -> u32 {
                  return self.weapon_data.attack_points; 
@@ -53,6 +93,10 @@ macro_rules! impl_Weapon {
             fn get_attack_mode_text(&self) -> String {
                 return self.weapon_data.attack_mode_text.clone(); 
             }
+
         }
+
+        // Type conversion
+        traitcast!(struct $T: GameObject, Item, Weapon);
     }
 }

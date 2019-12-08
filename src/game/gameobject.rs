@@ -17,6 +17,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use traitcast::{TraitcastFrom};
+
 pub struct GameObjectData {
     pub name        : String,
     pub flavor_text : String,
@@ -32,7 +34,7 @@ impl Default for GameObjectData {
     }
 }
 
-pub trait GameObject {
+pub trait GameObject: TraitcastFrom {
     fn name         (&self) -> String;
     fn flavor_text  (&self) -> String;
 }

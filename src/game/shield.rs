@@ -45,6 +45,11 @@ pub trait Shield: Item {
 #[macro_export]
 macro_rules! impl_Shield { 
     ($T:ident) => {
+
+        crate::impl_GameObject!($T);
+
+        crate::impl_Item!($T);
+
         impl Shield for $T {
             fn get_defense_points(&self) -> u32 {
                  return self.shield_data.defense_points; 
@@ -54,5 +59,8 @@ macro_rules! impl_Shield {
                 return self.shield_data.defense_mode_text.clone(); 
             }
         }
+
+        // Type conversion
+        traitcast!(struct $T: GameObject, Item, Shield);
     }
 }

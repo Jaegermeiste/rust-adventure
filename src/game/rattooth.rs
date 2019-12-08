@@ -17,7 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::rc::Rc;
+use traitcast::{traitcast};
 use crate::game::gameobject::*;
 use crate::game::item::*;
 use crate::game::weapon::*;
@@ -39,8 +39,6 @@ pub struct RatTooth {
     weapon_data         : WeaponData,
 }
 
-crate::impl_GameObject!(RatTooth);
-crate::impl_Item!(RatTooth);
 crate::impl_Weapon!(RatTooth);
 
 impl  Default for RatTooth {

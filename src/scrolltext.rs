@@ -25,7 +25,7 @@ use crossterm::{
     terminal::{Clear, ClearType, SetSize},
     input::{input, InputEvent, KeyEvent, MouseButton, MouseEvent},
     screen::{RawScreen, EnterAlternateScreen, LeaveAlternateScreen},
-    style::{Attribute, Color, SetForegroundColor, SetBackgroundColor, ResetColor},
+    style::{Color, SetForegroundColor, SetBackgroundColor, ResetColor},
     queue,
     Output,
     Result
@@ -185,7 +185,7 @@ impl  ScrollText {
 
         //println!("{}/{} <▲>/<▼>, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return.", self.scroll_pos, self.max_pos);
         let nav_bar = format!(" {:03}/{:03} <▲>/<▼>, <PgUp>/<PgDn>, or <Space> to navigate. <ESC> or <q> to return ", self.scroll_pos, self.max_pos);
-        execute!(
+        _result = execute!(
             stdout,
             SetForegroundColor(Color::Black),
             SetBackgroundColor(Color::White),

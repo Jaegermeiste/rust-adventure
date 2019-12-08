@@ -13,3 +13,6 @@ crossterm = "0.13.3"
 #num-derive = "0.3.0"
 lexical = "^4.0"
 textwrap = { version = "0.11", features = ["term_size"] }
+inventory = "^0.1.4"
+traitcast_core = "^0.2.0"
+traitcast = "^0.5.0"

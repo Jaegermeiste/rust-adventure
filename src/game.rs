@@ -17,8 +17,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-#![feature(macro_rules)]
-
 use std::rc::Rc;
 use crate::input::*;
 mod castle;
