@@ -59,6 +59,8 @@ impl Player {
         player.entity_data.pack.add_item(pointer_shield);
         player.entity_data.pack.set_shield(1, false);
 
+        // FIXME - Add health potion
+
         return player;
     }
 }
