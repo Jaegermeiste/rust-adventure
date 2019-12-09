@@ -49,8 +49,8 @@ impl Player {
             entity_data         : EntityData        { health : PLAYER_MAX_HEALTH, max_health : PLAYER_MAX_HEALTH, ..Default::default() },
             };
 
-        // Add Falchion
-        let pointer_weapon = Rc::new(RatTooth::default());  // FIXME - Falchion
+        // Add Dirk
+        let pointer_weapon = Rc::new(RatTooth::default());  // FIXME - Dirk
         player.entity_data.pack.add_item(pointer_weapon);
         player.entity_data.pack.set_weapon(0, false);
 
