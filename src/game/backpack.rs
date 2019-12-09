@@ -110,7 +110,7 @@ impl Backpack {
         return Option::None;
     }
 
-    pub fn  get_droppable_item_list (&self) -> Vec<Rc<dyn Item>> {
+    pub fn  droppable_item_list (&self) -> Vec<Rc<dyn Item>> {
         let mut drop_list : Vec<Rc<dyn Item>> = Vec::new();
 
         for item in self.items.iter() {
@@ -140,7 +140,7 @@ impl Backpack {
                 if traitcast::implements_trait::<dyn Item, dyn Weapon>(item.as_ref()) {
                     let weapon = traitcast::cast_ref::<dyn Item, dyn Weapon>(item.as_ref()).expect("Failed to unwrap Weapon");
 
-                    println!("     {}) {}     Weight: {}     {} Equippable as Weapon with Attack = ", (index + 1), item.name(), item.get_item_weight(), weapon.get_attack_points());
+                    println!("     {}) {}     Weight: {}     {} Equippable as Weapon with Attack = ", (index + 1), item.name(), item.get_item_weight(), weapon.attack_points());
                     println!("         {}", item.flavor_text());
                 }
             }
@@ -161,7 +161,7 @@ impl Backpack {
                     self.weapon_index = index;
 
                     if verbose {
-                        println!(" Weapon set to {} with Attack = {}", weapon.name(), weapon.get_attack_points());
+                        println!(" Weapon set to {} with Attack = {}", weapon.name(), weapon.attack_points());
                     }
                 }
             }
@@ -174,7 +174,7 @@ impl Backpack {
         }
     }
 
-    pub fn  get_current_weapon (&self) -> Option<Rc<&dyn Weapon>> {
+    pub fn  current_weapon (&self) -> Option<Rc<&dyn Weapon>> {
         let mut option : Option<Rc<&dyn Weapon>> = Option::None;
 
         if (self.weapon_index < self.items.len()) && 
@@ -202,7 +202,7 @@ impl Backpack {
                 if traitcast::implements_trait::<dyn Item, dyn Shield>(item.as_ref()) {
                     let shield = traitcast::cast_ref::<dyn Item, dyn Shield>(item.as_ref()).expect("Failed to unwrap Shield");
 
-                    println!("     {}) {}     Weight: {}     {} Equippable as Shield with Defense = ", (index + 1), item.name(), item.get_item_weight(), shield.get_defense_points());
+                    println!("     {}) {}     Weight: {}     {} Equippable as Shield with Defense = ", (index + 1), item.name(), item.get_item_weight(), shield.defense_points());
                     println!("         {}", item.flavor_text());
                 }
             }
@@ -223,7 +223,7 @@ impl Backpack {
                     self.shield_index = index;
 
                     if verbose {
-                        println!(" Shield set to {} with Defense = {}", shield.name(), shield.get_defense_points());
+                        println!(" Shield set to {} with Defense = {}", shield.name(), shield.defense_points());
                     }
                 }
             }
@@ -236,7 +236,7 @@ impl Backpack {
         }
     }
 
-    pub fn  get_current_shield (&self) -> Option<Rc<&dyn Shield>> {
+    pub fn  current_shield (&self) -> Option<Rc<&dyn Shield>> {
         let mut option : Option<Rc<&dyn Shield>> = Option::None;
 
         if (self.shield_index < self.items.len()) && 
@@ -256,7 +256,7 @@ impl Backpack {
         return option;
     }
 
-    pub fn  is_overweight (&self) -> bool {
+    pub fn  overweight (&self) -> bool {
         let mut overweight = false;
         let mut weight = 0;
 
@@ -285,7 +285,7 @@ impl Backpack {
         return found;
     }
 
-    pub fn  get_size (&self) -> u32{
+    pub fn  size (&self) -> u32{
         return self.items.len() as u32;
     }
 }

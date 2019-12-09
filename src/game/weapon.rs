@@ -39,8 +39,8 @@ impl Default for WeaponData {
 }
 
 pub trait Weapon: Item  + TraitcastFrom {
-    fn  get_attack_points       (&self) -> u32;
-    fn  get_attack_mode_text    (&self) -> String;
+    fn  attack_points       (&self) -> u32;
+    fn  attack_mode_text    (&self) -> String;
 }
 
 #[macro_export]
@@ -86,11 +86,11 @@ macro_rules! impl_Weapon {
 */
 
         impl Weapon for $T {
-            fn get_attack_points(&self) -> u32 {
+            fn attack_points(&self) -> u32 {
                  return self.weapon_data.attack_points; 
             }
 
-            fn get_attack_mode_text(&self) -> String {
+            fn attack_mode_text(&self) -> String {
                 return self.weapon_data.attack_mode_text.clone(); 
             }
 

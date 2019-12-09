@@ -38,8 +38,8 @@ impl Default for ShieldData {
 }
 
 pub trait Shield: Item {
-    fn  get_defense_points      (&self) -> u32;
-    fn  get_defense_mode_text   (&self) -> String;
+    fn  defense_points      (&self) -> u32;
+    fn  defense_mode_text   (&self) -> String;
 }
 
 #[macro_export]
@@ -51,11 +51,11 @@ macro_rules! impl_Shield {
         crate::impl_Item!($T);
 
         impl Shield for $T {
-            fn get_defense_points(&self) -> u32 {
+            fn defense_points(&self) -> u32 {
                  return self.shield_data.defense_points; 
             }
 
-            fn get_defense_mode_text(&self) -> String {
+            fn defense_mode_text(&self) -> String {
                 return self.shield_data.defense_mode_text.clone(); 
             }
         }

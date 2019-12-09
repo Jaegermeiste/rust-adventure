@@ -24,6 +24,8 @@ mod castle;
 mod gameobject;
 mod locatable;
 mod space;
+mod entity;
+mod player;
 mod item;
 mod weapon;
 mod shield;
@@ -31,11 +33,13 @@ mod backpack;
 mod rattooth;
 mod buckler;
 use crate::game::castle::*;
+use crate::game::player::*;
 
 pub struct Game {
     input: Rc<Input>,
 
     castle: Castle,
+    player: Player,
 }
 
 impl Game {
@@ -43,6 +47,7 @@ impl Game {
         Game { 
             input: Rc::clone(&in_input),
             castle: Castle::new(),
+            player: Player::new(),
             }
     }
     

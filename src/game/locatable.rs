@@ -26,9 +26,9 @@ pub struct LocationData {
 }
 
 pub trait Locatable: GameObject + TraitcastFrom {
-    fn set_x_coord          (&self, coord : u32);
-    fn set_y_coord          (&self, coord : u32);
-    fn set_coords           (&self, x : u32, y : u32);
+    fn set_x_coord          (&mut self, coord : u32);
+    fn set_y_coord          (&mut self, coord : u32);
+    fn set_coords           (&mut self, x : u32, y : u32);
 
     fn x_coord              (&self)               -> u32;
     fn y_coord              (&self)               -> u32;
@@ -38,15 +38,15 @@ pub trait Locatable: GameObject + TraitcastFrom {
 macro_rules! impl_Locatable { 
     ($T:ident) => {
         impl Locatable for $T {
-            fn set_x_coord(&self, coord : u32) {
+            fn set_x_coord(&mut self, coord : u32) {
                  self.location_data.x_coord = coord; 
             }
 
-            fn set_y_coord(&self, coord : u32) {
+            fn set_y_coord(&mut self, coord : u32) {
                 self.location_data.y_coord = coord; 
             }
 
-            fn set_coords(&self, x : u32, y : u32) {
+            fn set_coords(&mut self, x : u32, y : u32) {
                 self.location_data.x_coord = x; 
                 self.location_data.y_coord = y; 
             }

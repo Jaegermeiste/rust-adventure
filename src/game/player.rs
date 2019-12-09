@@ -19,6 +19,10 @@
 **************************************************************************/
 use std::rc::Rc;
 use crate::game::gameobject::*;
+use crate::game::locatable::*;
+use crate::game::entity::*;
+use crate::game::rattooth::*;   // FIXME
+use crate::game::buckler::*;
 
 static PLAYER_NAME          : &str = "Chain";
 
@@ -29,4 +33,34 @@ static PLAYER_XP_LEVEL_2	: u32 = 500;	// Spectre
 static PLAYER_XP_LEVEL_3	: u32 = 1000;	// Skeleton
 static PLAYER_XP_LEVEL_4	: u32 = 3000;	// Demogorgon
 
-static PLAYER_MAX_HEALTH	: u32 = 100;
+static PLAYER_MAX_HEALTH	: i32 = 100;
+
+pub struct Player {
+    game_object_data    : GameObjectData,
+    location_data       : LocationData,
+    entity_data         : EntityData
+}
+
+impl Player {
+    pub fn new() -> Player {
+        let mut player = Player { 
+            game_object_data    : GameObjectData    { name : String::from(PLAYER_NAME), flavor_text : String::from(PLAYER_FLAVOR_TEXT) },
+            location_data       : LocationData      { x_coord : 0, y_coord : 0 },
+            entity_data         : EntityData        { health : PLAYER_MAX_HEALTH, max_health : PLAYER_MAX_HEALTH, ..Default::default() },
+            };
+
+        // Add Falchion
+        let pointer_weapon = Rc::new(RatTooth::default());  // FIXME - Falchion
+        player.entity_data.pack.add_item(pointer_weapon);
+        player.entity_data.pack.set_weapon(0, false);
+
+        // Add buckler
+        let pointer_shield = Rc::new(Buckler::default());
+        player.entity_data.pack.add_item(pointer_shield);
+        player.entity_data.pack.set_shield(1, false);
+
+        return player;
+    }
+}
+
+crate::impl_Entity!(Player);
