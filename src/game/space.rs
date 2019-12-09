@@ -19,6 +19,7 @@
 **************************************************************************/
 use std::rc::Rc;
 use crate::game::gameobject::*;
+use crate::game::locatable::*;
 use crate::game::backpack::*;
 
 static	SPACE_DEFAULT_SPECIAL_ACTION_TEXT : &str =	"Turn Lights On";
@@ -42,9 +43,6 @@ pub struct SpaceData {
     pub top                         : Option<Rc<dyn Space>>,
     pub bottom                      : Option<Rc<dyn Space>>,
 
-    pub x_coord                     : u32,
-    pub y_coord                     : u32,
-
     pub special_action_text         : String,
     pub special_action_performed    : bool,
 
@@ -62,8 +60,6 @@ impl Default for SpaceData {
             left                        :   None,
             top                         :   None,
             bottom                      :   None,
-            x_coord                     :   0,
-            y_coord                     :   0,
             special_action_text         :   SPACE_DEFAULT_SPECIAL_ACTION_TEXT.to_string(),
             special_action_performed    :   false,
             pack                        :   Backpack::new(),
@@ -74,22 +70,16 @@ impl Default for SpaceData {
     }
 }
 
-pub trait Space: GameObject {
+pub trait Space: GameObject + Locatable {
     fn set_right                (&self, in_right : &Rc<dyn Space>);
     fn set_left                 (&self, in_right : &Rc<dyn Space>);
     fn set_top                  (&self, in_right : &Rc<dyn Space>);
     fn set_bottom               (&self, in_right : &Rc<dyn Space>);
     
-    fn set_x_coord              (&self, coord : u32);
-    fn set_y_coord              (&self, coord : u32);
-
     fn get_right                (&self)                             -> Rc<dyn Space>;
     fn get_left                 (&self)                             -> Rc<dyn Space>;
     fn get_top                  (&self)                             -> Rc<dyn Space>;
     fn get_bottom               (&self)                             -> Rc<dyn Space>;
-
-    fn get_x_coord              (&self)                             -> u32;
-    fn get_y_coord              (&self)                             -> u32;
 
     fn is_movement_enabled      (&self)                             -> bool;
 

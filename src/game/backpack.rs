@@ -33,8 +33,8 @@ pub struct Backpack {
     
     items           :   Vec<Rc<dyn Item>>,
 
-    weapon_index    :   u32,
-    shield_index    :   u32,
+    weapon_index    :   usize,
+    shield_index    :   usize,
 }
 
 crate::impl_GameObject!(Backpack);
@@ -44,8 +44,8 @@ impl Backpack {
         let pack = Backpack { 
             game_object_data    : GameObjectData    { name : String::from(BACKPACK_NAME), flavor_text : String::from(BACKPACK_FLAVOR_TEXT) },
             items               : Vec::new(),
-            weapon_index        : u32::max_value(),
-            shield_index        : u32::max_value(),
+            weapon_index        : usize::max_value(),
+            shield_index        : usize::max_value(),
             };
         return pack;
     }
@@ -87,8 +87,8 @@ impl Backpack {
         }
     }
 
-    pub fn  drop_item   (&mut self, index : u32) -> Option<Rc<dyn Item>> {
-        let drop_item = self.items.get(index as usize).unwrap();
+    pub fn  drop_item   (&mut self, index : usize) -> Option<Rc<dyn Item>> {
+        let drop_item = self.items.get(index).unwrap();
 
         if drop_item.get_item_property() == ItemProperty::Droppable {
             let removed = self.items.remove(index as usize);	// Remove the element
@@ -125,7 +125,7 @@ impl Backpack {
     pub fn  drop_first_item_of_type   (&mut self, item_type : ItemType) -> Option<Rc<dyn Item>> {
         for (index, item) in self.items.iter().enumerate() {
             if item.get_item_type() == item_type {
-                return self.drop_item(index as u32);
+                return self.drop_item(index);
             }
         }
 
@@ -147,11 +147,11 @@ impl Backpack {
         }
     }
 
-    pub fn  set_weapon (&mut self, index : u32, verbose : bool) {
+    pub fn  set_weapon (&mut self, index : usize, verbose : bool) {
         // Verify valid index
-        if index < (self.items.len() as u32)
+        if index < self.items.len()
         {
-            let item = self.items.get(index as usize).unwrap();
+            let item = self.items.get(index).unwrap();
 
             // Verify item at index is weapon
             if item.get_item_type() == ItemType::Weapon {
@@ -177,7 +177,7 @@ impl Backpack {
     pub fn  get_current_weapon (&self) -> Option<Rc<&dyn Weapon>> {
         let mut option : Option<Rc<&dyn Weapon>> = Option::None;
 
-        if (self.weapon_index < self.items.len() as u32) && 
+        if (self.weapon_index < self.items.len()) && 
             (self.items.get(self.weapon_index as usize).unwrap().get_item_type() == ItemType::Weapon) {
             
                 let item = self.items.get(self.weapon_index as usize).unwrap();
@@ -209,9 +209,9 @@ impl Backpack {
         }
     }
 
-    pub fn  set_shield (&mut self, index : u32, verbose : bool) {
+    pub fn  set_shield (&mut self, index : usize, verbose : bool) {
         // Verify valid index
-        if index < (self.items.len() as u32)
+        if index < self.items.len()
         {
             let item = self.items.get(index as usize).unwrap();
 
@@ -239,7 +239,7 @@ impl Backpack {
     pub fn  get_current_shield (&self) -> Option<Rc<&dyn Shield>> {
         let mut option : Option<Rc<&dyn Shield>> = Option::None;
 
-        if (self.shield_index < self.items.len() as u32) && 
+        if (self.shield_index < self.items.len()) && 
             (self.items.get(self.shield_index as usize).unwrap().get_item_type() == ItemType::Shield) {
             
                 let item = self.items.get(self.shield_index as usize).unwrap();

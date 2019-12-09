@@ -18,33 +18,15 @@
 
 **************************************************************************/
 use std::rc::Rc;
-use crate::input::*;
-mod castle;
-#[macro_use]
-mod gameobject;
-mod locatable;
-mod space;
-mod item;
-mod weapon;
-mod shield;
-mod backpack;
-mod rattooth;
-mod buckler;
-use crate::game::castle::*;
+use crate::game::gameobject::*;
 
-pub struct Game {
-    input: Rc<Input>,
+static PLAYER_NAME          : &str = "Chain";
 
-    castle: Castle,
-}
+static PLAYER_FLAVOR_TEXT	: &str = " Definitely not Zelda.";
 
-impl Game {
-    pub fn new(in_input : &Rc<Input>) -> Game {
-        Game { 
-            input: Rc::clone(&in_input),
-            castle: Castle::new(),
-            }
-    }
-    
-    pub fn run(&self) {}
-}
+static PLAYER_XP_LEVEL_1	: u32 = 100;	// Rats
+static PLAYER_XP_LEVEL_2	: u32 = 500;	// Spectre
+static PLAYER_XP_LEVEL_3	: u32 = 1000;	// Skeleton
+static PLAYER_XP_LEVEL_4	: u32 = 3000;	// Demogorgon
+
+static PLAYER_MAX_HEALTH	: u32 = 100;
