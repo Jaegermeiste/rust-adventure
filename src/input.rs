@@ -18,12 +18,16 @@
 
 **************************************************************************/
 use std::rc::Rc;
-use std::io;
+use std::io::{stdout, Write};
+use std::time::Duration;
 use std::cell::Cell;
 extern crate crossterm;
 use crossterm::{
-    input::{input, KeyEvent},
-    screen::RawScreen,
+    execute,
+    //input::{input, KeyEvent},
+    //screen::RawScreen,
+    terminal::{self, Clear, ClearType, SetSize, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode},
+    event::{self, poll, read, Event, KeyCode, KeyEvent, DisableMouseCapture, EnableMouseCapture},
     Result,
 };
 extern crate lexical;
@@ -64,6 +68,61 @@ impl  Input {
         self.canceled.get()
     }
 
+    // CrossTerm replacement functions
+    pub fn read_char(&self) -> Result<char> {
+        loop {
+            if let Event::Key(KeyEvent {
+                code: KeyCode::Char(c),
+                ..
+            }) = event::read()?
+            {
+                return Ok(c);
+            }
+        }
+    }
+
+    pub fn read_line(&self) -> Result<String> {
+        let mut line = String::new();
+        while let Event::Key(KeyEvent { code: code, .. }) = event::read()? {
+            match code {
+                KeyCode::Enter => {
+                    break;
+                },
+                KeyCode::Char(c) => {
+                    line.push(c);
+                },
+                _ => {}
+            }
+        }
+    
+        return Ok(line);
+    }
+
+    pub fn read_sync(&self) -> Result<Event> {
+        return event::read();
+    }
+
+    pub fn read_async(&self) -> Result<Event> {
+        if poll(Duration::from_millis(0))? {
+            // Guaranteed that `read()` wont block if `poll` returns `Ok(true)`
+            let event = event::read()?;
+
+            return Ok(event);
+        }
+    
+        return Err(crossterm::ErrorKind::__Nonexhaustive);
+    }
+
+    pub fn enable_mouse_mode(&self) -> Result<()> {
+        execute!(std::io::stdout(), event::EnableMouseCapture)
+    }
+
+    pub fn disable_mouse_mode(&self) -> Result<()> {
+        execute!(std::io::stdout(), event::DisableMouseCapture)
+    }
+
+    // End Crossterm replaceents
+
     pub fn get_keypress_from_console(&self) -> char
     {
         let mut input_value : char = '\0';
@@ -71,14 +130,16 @@ impl  Input {
         self.canceled.set(false);
 
         // Enable raw mode and keep the `_raw` around otherwise the raw mode will be disabled
-        let _raw = RawScreen::into_raw_mode();
+        //let _raw = RawScreen::into_raw_mode();
+
+        enable_raw_mode();
 
         // Create an input from our screen
-        let input = input();
+        //let input = input();
 
         while flag_input_valid == false
         {
-            match input.read_char() {
+            match self.read_char() {
                 Ok(c) => input_value = c,
                 Err(e) => println!("Read Error: {}", e),
             }
@@ -97,6 +158,8 @@ impl  Input {
                 flag_input_valid = false;
             }
         }
+
+        disable_raw_mode();
 
         return input_value;
     }
@@ -136,13 +199,13 @@ impl  Input {
     pub fn get_string_from_console_bounds(&self, min_chars: u32, max_chars: u32) -> String {
         let mut input_value : String = "".to_string();
         let mut flag_input_valid : bool = false;
-        let input = crossterm::input::input();
+        //let input = crossterm::input::input();
         self.canceled.set(false);
 
         while flag_input_valid == false {
             input_value = "".to_string();
 
-            match input.read_line() {
+            match self.read_line() {
                 Ok(s) => input_value = s,
                 Err(e) => println!("Read Error: {}", e),
             }
@@ -171,7 +234,7 @@ impl  Input {
         let mut	input_value :f64		= std::f64::NAN;
         let mut flag_input_valid : bool	= false;
         let mut test_char : char		= ' ';
-        let input = crossterm::input::input();
+        //let input = crossterm::input::input();
 
         // Reset flag
         self.canceled.set(false);
@@ -203,9 +266,10 @@ impl  Input {
         {
             // Grab a test char from stdin
             {
-                let _raw = RawScreen::into_raw_mode();  // Go into raw for just this scope
+                //let _raw = RawScreen::into_raw_mode();  // Go into raw for just this scope
+                terminal::enable_raw_mode();
 
-                match input.read_char() {
+                match self.read_char() {
                     Ok(c) => {
                         test_char = c;
                         //println!(" DEBUG: Input test_char: {}", test_char);
@@ -217,6 +281,8 @@ impl  Input {
                     flag_input_valid = true;
                     self.canceled.set(true);
                 }
+
+                terminal::disable_raw_mode();
             }
             
             if self.canceled.get() == false {
@@ -228,7 +294,7 @@ impl  Input {
                     input_line.push(test_char);
                 }
                 
-                match input.read_line() {
+                match self.read_line() {
                     Ok(s) => {
                         input_line.push_str(s.as_str());
                         //println!(" DEBUG: Input line: {}", input_line);
@@ -286,7 +352,7 @@ impl  Input {
     pub fn get_double_value_from_console_list (&self, mut allowed_value_list : Vec<f64>, numeric_type : InputNumericType) -> f64 {
         let mut	input_value :f64		= std::f64::NAN;
         let mut flag_input_valid : bool	= false;
-        let input = crossterm::input::input();
+        //let input = crossterm::input::input();
 
         // Ensure bounds are valid for input type
         for element in allowed_value_list.iter_mut() {
@@ -317,7 +383,7 @@ impl  Input {
             input_line.clear();
             input_value = std::f64::NAN;
 
-            match input.read_line() {
+            match self.read_line() {
                 Ok(s) => input_line = s,
                 Err(e) => println!("Read Error: {}", e),
             }

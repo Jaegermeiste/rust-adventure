@@ -18,37 +18,42 @@
 
 **************************************************************************/
 use std::io::{stdout, Write};
+use std::rc::Rc;
 extern crate crossterm;
 use crossterm::{
     execute,
     cursor::{Hide, MoveTo, Show},
-    terminal::{Clear, ClearType, SetSize},
-    input::{input, InputEvent, KeyEvent, MouseButton, MouseEvent},
-    screen::{RawScreen, EnterAlternateScreen, LeaveAlternateScreen},
-    style::{Color, SetForegroundColor, SetBackgroundColor, ResetColor},
+    terminal::{self, Clear, ClearType, SetSize, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode},
+    //input::{input, InputEvent, KeyEvent, MouseButton, MouseEvent},
+    event::{self, Event, KeyEvent, KeyCode, MouseEvent, MouseButton},
+    //screen::{RawScreen, EnterAlternateScreen, LeaveAlternateScreen},
+    style::{Color, SetForegroundColor, SetBackgroundColor, ResetColor, Print},
     queue,
-    Output,
+    //Output,
     Result
 };
 extern crate textwrap;
 use textwrap::Wrapper;
 use crate::DEFAULT_TERMINAL_HEIGHT;
 use crate::DEFAULT_TERMINAL_WIDTH;
+use crate::input::*;
 
 pub struct ScrollText {
     scroll_pos : u32,
     max_pos : u32,
     console_height : u32,
     text : String,
+    input: Rc<Input>,
 }
 
 impl  ScrollText {
-    pub fn new() -> ScrollText {
+    pub fn new(in_input : &Rc<Input>) -> ScrollText {
         let scrolltext = ScrollText { 
             scroll_pos      : 0,
             max_pos         : 0,
             console_height  : DEFAULT_TERMINAL_HEIGHT as u32,
             text            : "".to_string(),
+            input           : Rc::clone(&in_input),
             };
         return scrolltext;
     }
@@ -78,11 +83,11 @@ impl  ScrollText {
         self.print_stored_text();
     }
 
-    fn process_input_event(&mut self, key_event: InputEvent) -> bool {
-        match key_event {
-            InputEvent::Keyboard(k) => {
-                match k {
-                    KeyEvent::Char(c) => match c {
+    fn process_input_event(&mut self, event: Event) -> bool {
+        match event {
+            Event::Key(k) => {
+                match k.code {
+                    KeyCode::Char(c) => match c {
                         'q' => {
                             return true;
                         }
@@ -96,41 +101,32 @@ impl  ScrollText {
                             ()
                         }
                     },
-                    KeyEvent::Esc => {
+                    KeyCode::Esc => {
                         return true;
                     }
-                    KeyEvent::PageUp => {
+                    KeyCode::PageUp => {
                         self.scroll(-(self.console_height as i32 - 2));
                     }
-                    KeyEvent::PageDown => {
+                    KeyCode::PageDown => {
                         self.scroll(self.console_height as i32 - 2);
                     }
-                    KeyEvent::Up => {
+                    KeyCode::Up => {
                         self.scroll(-1);
                     }
-                    KeyEvent::Down => {
+                    KeyCode::Down => {
                         self.scroll(1);
                     }
-                    _ => {
-                        ()
-                    }
+                    _ => (),
                 }
-            }
-            InputEvent::Mouse(m) => match m {
-                MouseEvent::Press(b, _x, _y) => match b {
-                    MouseButton::WheelUp => {
+            },
+            Event::Mouse(m) => match m {
+                MouseEvent::ScrollUp(col, row, modifier) => {
                         self.scroll(-1);
                     },
-                    MouseButton::WheelDown => {
+                MouseEvent::ScrollDown(col, row, modifier) => {
                         self.scroll(1);
                     },
-                    _ => {
-                        ()
-                    }
-                },
-                _ => {
-                    ()
-                }
+                _ => (),
             },
             _ => (),
         }
@@ -139,19 +135,18 @@ impl  ScrollText {
     }
 
     fn read_synchronously(&mut self) -> Result<()> {
-        let _raw = RawScreen::into_raw_mode()?;
-
-        let input = input();
+        terminal::enable_raw_mode();
 
         // enable mouse events to be captured.
-        input.enable_mouse_mode()?;
+        self.input.enable_mouse_mode();
 
-        let mut sync_stdin = input.read_sync();
+        //let mut sync_stdin = self.input.read_sync();
 
         loop {
-            let event = sync_stdin.next();
+            //let event = sync_stdin.next();
+            let event = self.input.read_sync();
 
-            if let Some(key_event) = event {
+            if let Some(key_event) = event.ok() {
                 if self.process_input_event(key_event) {
                     break;
                 }
@@ -159,7 +154,9 @@ impl  ScrollText {
         }
 
         // disable mouse events to be captured.
-        input.disable_mouse_mode()
+        self.input.disable_mouse_mode();
+
+        terminal::disable_raw_mode()
     }
 
     fn print_stored_text(&mut self) {
@@ -189,7 +186,7 @@ impl  ScrollText {
             stdout,
             SetForegroundColor(Color::Black),
             SetBackgroundColor(Color::White),
-            Output(nav_bar),
+            Print(nav_bar),
             ResetColor
         );
     }

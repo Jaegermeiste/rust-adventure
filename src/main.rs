@@ -40,7 +40,7 @@ pub static DEFAULT_TERMINAL_HEIGHT  : u16 = 30;
 
 fn main() {
     let input                       = Input::new();
-    let mut scrolltext              = ScrollText::new();
+    let mut scrolltext              = ScrollText::new(&input);
     let mut menu_system             = Menu::new(&input);
     let main_menu_index             = menu_system.add_page("Main Menu");
     let about_page_index            = menu_system.add_page("About");
