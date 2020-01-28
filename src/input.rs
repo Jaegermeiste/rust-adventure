@@ -18,7 +18,7 @@
 
 **************************************************************************/
 use std::rc::Rc;
-use std::io::{stdout, Write};
+use std::io::{stdout, Write, Read};
 use std::time::Duration;
 use std::cell::Cell;
 extern crate crossterm;
@@ -28,11 +28,13 @@ use crossterm::{
     //screen::RawScreen,
     terminal::{self, Clear, ClearType, SetSize, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode},
     event::{self, poll, read, Event, KeyCode, KeyEvent, DisableMouseCapture, EnableMouseCapture},
+    cursor::{EnableBlinking, Show},
     Result,
 };
 extern crate lexical;
 
-pub static DEFAULT_CANCEL_VAL : char =	0x04 as char;   /* EOT */
+//pub static DEFAULT_CANCEL_VAL : char =	0x04 as char;   /* EOT */
+pub static DEFAULT_CANCEL_VAL : u8 = 0x04; //0x04_u8.into();
 pub static MAX_STR_LEN : u32 =	std::u8::MAX as u32;   /* 255 */
 
 #[derive(PartialEq, Eq, Clone)] 
@@ -69,7 +71,7 @@ impl  Input {
     }
 
     // CrossTerm replacement functions
-    pub fn read_char(&self) -> Result<char> {
+    /*pub fn read_char(&self) -> Result<char> {
         loop {
             if let Event::Key(KeyEvent {
                 code: KeyCode::Char(c),
@@ -79,11 +81,37 @@ impl  Input {
                 return Ok(c);
             }
         }
+    }*/
+
+    pub fn read_char(&self) -> Result<char> {  
+        let in_char = std::io::stdin().bytes().next().map(|b| b.unwrap() as char).unwrap();
+
+            return Ok(in_char);
     }
 
-    pub fn read_line(&self) -> Result<String> {
+    pub fn peek_char(&self) -> Result<char> {
+
+        loop {
+            match std::io::stdin().by_ref().bytes().peekable().peek() {
+                Some(&Ok(ch)) => {
+                    match ch {
+                        _ => return Ok(ch as char),
+                    }
+                }
+                Some(&Err(_)) => panic!(),
+                None => break,
+            }
+        }
+        
+        return Ok('\0');
+    }
+
+    /*pub fn read_line(&self) -> Result<String> {
         let mut line = String::new();
-        while let Event::Key(KeyEvent { code: code, .. }) = event::read()? {
+
+        line.clear();
+
+        while let Event::Key(KeyEvent { code, .. }) = event::read()? {
             match code {
                 KeyCode::Enter => {
                     break;
@@ -96,6 +124,14 @@ impl  Input {
         }
     
         return Ok(line);
+    }*/
+
+    fn read_line(&self) -> Result<String> {
+        let mut rv = String::new();
+        std::io::stdin().read_line(&mut rv)?;
+        let len = rv.trim_end_matches(&['\r', '\n'][..]).len();
+        rv.truncate(len);
+        Ok(rv)
     }
 
     pub fn read_sync(&self) -> Result<Event> {
@@ -121,7 +157,7 @@ impl  Input {
         execute!(std::io::stdout(), event::DisableMouseCapture)
     }
 
-    // End Crossterm replaceents
+    // End Crossterm replacements
 
     pub fn get_keypress_from_console(&self) -> char
     {
@@ -129,13 +165,9 @@ impl  Input {
         let mut flag_input_valid : bool = false;
         self.canceled.set(false);
 
-        // Enable raw mode and keep the `_raw` around otherwise the raw mode will be disabled
-        //let _raw = RawScreen::into_raw_mode();
+        self.disable_mouse_mode();
 
         enable_raw_mode();
-
-        // Create an input from our screen
-        //let input = input();
 
         while flag_input_valid == false
         {
@@ -230,11 +262,12 @@ impl  Input {
         return self.get_string_from_console_bounds(0, MAX_STR_LEN);
     }
 
-    pub fn get_double_value_from_console(&self, mut lower_bound : f64, mut upper_bound : f64, numeric_type : InputNumericType, cancel_value: char) -> f64 {
+    pub fn get_double_value_from_console(&self, mut lower_bound : f64, mut upper_bound : f64, numeric_type : InputNumericType, cancel_value: u8) -> f64 {
         let mut	input_value :f64		= std::f64::NAN;
         let mut flag_input_valid : bool	= false;
-        let mut test_char : char		= ' ';
-        //let input = crossterm::input::input();
+        let mut test_char : u8		= 0;     // NULL
+
+        //self.disable_mouse_mode();
 
         // Reset flag
         self.canceled.set(false);
@@ -262,36 +295,26 @@ impl  Input {
             _ => (),
         }
 
+        // Ensure cursor is shown
+        let _ = execute!(
+            stdout(),
+            EnableBlinking,
+            Show
+        );
+
         while (flag_input_valid == false) && (self.canceled.get() == false)
         {
             // Grab a test char from stdin
-            {
-                //let _raw = RawScreen::into_raw_mode();  // Go into raw for just this scope
-                terminal::enable_raw_mode();
-
-                match self.read_char() {
-                    Ok(c) => {
-                        test_char = c;
-                        //println!(" DEBUG: Input test_char: {}", test_char);
-                    },
-                    Err(e) => println!("Read Error: {}", e),
-                }
-                
-                if test_char == cancel_value {
-                    flag_input_valid = true;
-                    self.canceled.set(true);
-                }
-
-                terminal::disable_raw_mode();
-            }
+            let var = self.peek_char();
+            test_char = var.ok().unwrap() as u8;
             
             if self.canceled.get() == false {
                 let mut input_line : String = "".to_string();
                 input_line.clear();
 
                 // if the test char was numeric, push it into the string so we don't lose it
-                if ((test_char >= '0') && (test_char <= '9')) || (test_char == '.') {
-                    input_line.push(test_char);
+                if ((test_char as char >= '0') && (test_char as char <= '9')) || (test_char as char == '.') {
+                    input_line.push(test_char as char);
                 }
                 
                 match self.read_line() {
@@ -302,9 +325,6 @@ impl  Input {
                     Err(e) => println!("Read Error: {}", e),
                 }
 
-                //println!(" DEBUG: Input line: {}", input_line);
-
-                //input_value = input_line.parse::<f64>().expect(" Input::get_double_value_from_console failed to get line");
                 let parsed_result = lexical::parse::<f64, _>(input_line.as_str());
 
                 let mut passed_parsing = false;
@@ -352,7 +372,6 @@ impl  Input {
     pub fn get_double_value_from_console_list (&self, mut allowed_value_list : Vec<f64>, numeric_type : InputNumericType) -> f64 {
         let mut	input_value :f64		= std::f64::NAN;
         let mut flag_input_valid : bool	= false;
-        //let input = crossterm::input::input();
 
         // Ensure bounds are valid for input type
         for element in allowed_value_list.iter_mut() {
@@ -457,11 +476,11 @@ impl  Input {
         return input_value;
     }
 
-    pub fn get_signed_integer_value_from_console_range(&self, lower_bound: i32, upper_bound: i32, cancel_val: char) -> i32 {
+    pub fn get_signed_integer_value_from_console_range(&self, lower_bound: i32, upper_bound: i32, cancel_val: u8) -> i32 {
 	    return self.get_double_value_from_console(lower_bound as f64, upper_bound as f64, InputNumericType::SignedInteger, cancel_val).round() as i32;
     }
 
-    pub fn get_signed_integer_value_from_console(&self, cancel_val: char) -> i32 {
+    pub fn get_signed_integer_value_from_console(&self, cancel_val: u8) -> i32 {
 	    return self.get_double_value_from_console(std::i32::MIN as f64, std::i32::MAX as f64, InputNumericType::SignedInteger, cancel_val).round() as i32;
     }
 
@@ -475,11 +494,11 @@ impl  Input {
         return self.get_double_value_from_console_list(double_value_list, InputNumericType::SignedInteger).round() as i32;
     }
 
-    pub fn get_unsigned_integer_value_from_console_range(&self, lower_bound: u32, upper_bound: u32, cancel_val: char) -> u32 {
+    pub fn get_unsigned_integer_value_from_console_range(&self, lower_bound: u32, upper_bound: u32, cancel_val: u8) -> u32 {
 	    return self.get_double_value_from_console(lower_bound as f64, upper_bound as f64, InputNumericType::UnsignedInteger, cancel_val).round() as u32;
     }
 
-    pub fn get_unsigned_integer_value_from_console(&self, cancel_val: char) -> u32 {
+    pub fn get_unsigned_integer_value_from_console(&self, cancel_val: u8) -> u32 {
 	    return self.get_double_value_from_console(std::i32::MIN as f64, std::i32::MAX as f64, InputNumericType::UnsignedInteger, cancel_val).round() as u32;
     }
 

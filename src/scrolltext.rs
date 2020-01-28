@@ -23,13 +23,10 @@ extern crate crossterm;
 use crossterm::{
     execute,
     cursor::{Hide, MoveTo, Show},
-    terminal::{self, Clear, ClearType, SetSize, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode},
-    //input::{input, InputEvent, KeyEvent, MouseButton, MouseEvent},
-    event::{self, Event, KeyEvent, KeyCode, MouseEvent, MouseButton},
-    //screen::{RawScreen, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{self, Clear, ClearType, SetSize, EnterAlternateScreen, LeaveAlternateScreen},
+    event::{Event, KeyCode, MouseEvent},
     style::{Color, SetForegroundColor, SetBackgroundColor, ResetColor, Print},
     queue,
-    //Output,
     Result
 };
 extern crate textwrap;
@@ -120,10 +117,10 @@ impl  ScrollText {
                 }
             },
             Event::Mouse(m) => match m {
-                MouseEvent::ScrollUp(col, row, modifier) => {
+                MouseEvent::ScrollUp(_col, _row, _modifier) => {
                         self.scroll(-1);
                     },
-                MouseEvent::ScrollDown(col, row, modifier) => {
+                MouseEvent::ScrollDown(_col, _row, _modifier) => {
                         self.scroll(1);
                     },
                 _ => (),
@@ -135,10 +132,10 @@ impl  ScrollText {
     }
 
     fn read_synchronously(&mut self) -> Result<()> {
-        terminal::enable_raw_mode();
+        let _ = terminal::enable_raw_mode();
 
         // enable mouse events to be captured.
-        self.input.enable_mouse_mode();
+        let _ = self.input.enable_mouse_mode();
 
         //let mut sync_stdin = self.input.read_sync();
 
@@ -154,7 +151,7 @@ impl  ScrollText {
         }
 
         // disable mouse events to be captured.
-        self.input.disable_mouse_mode();
+        let _ = self.input.disable_mouse_mode();
 
         terminal::disable_raw_mode()
     }
