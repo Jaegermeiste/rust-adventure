@@ -21,8 +21,9 @@ use std::rc::Rc;
 use crate::game::gameobject::*;
 use crate::game::locatable::*;
 use crate::game::entity::*;
-use crate::game::rattooth::*;   // FIXME
+use crate::game::dirk::*;
 use crate::game::buckler::*;
+use crate::game::healthpotion::*;
 
 static PLAYER_NAME          : &str = "Chain";
 
@@ -50,7 +51,7 @@ impl Player {
             };
 
         // Add Dirk
-        let pointer_weapon = Rc::new(RatTooth::default());  // FIXME - Dirk
+        let pointer_weapon = Rc::new(Dirk::default());
         player.entity_data.pack.add_item(pointer_weapon);
         player.entity_data.pack.set_weapon(0, false);
 
@@ -59,7 +60,9 @@ impl Player {
         player.entity_data.pack.add_item(pointer_shield);
         player.entity_data.pack.set_shield(1, false);
 
-        // FIXME - Add health potion
+        // Add Health Potion
+        let pointer_health = Rc::new(HealthPotion::default());
+        player.entity_data.pack.add_item(pointer_health);
 
         return player;
     }

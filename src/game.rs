@@ -32,6 +32,8 @@ mod shield;
 mod backpack;
 mod rattooth;
 mod buckler;
+mod healthpotion;
+mod dirk;
 use crate::game::castle::*;
 use crate::game::player::*;
 
