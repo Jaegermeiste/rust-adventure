@@ -19,34 +19,30 @@
 **************************************************************************/
 use traitcast::{traitcast};
 use crate::game::gameobject::*;
-use crate::game::item::*;
-use crate::game::weapon::*;
+use crate::game::items::item::*;
 
-static	DIRK_NAME				    : &str = "Dirk";
-static	DIRK_FLAVOR_TEXT		    : &str = " More of a letter opener than a proper weapon.";
-static	DIRK_WEIGHT				    : u32 = 1;
-static	DIRK_ATTACK_POINTS		    : u32 = 10;
-static  DIRK_ATTACK_MODE_TEXT	    : &str = "stabs";
+static	HEALTHPOTION_NAME			: &str = "Health Potion";
+static	HEALTHPOTION_FLAVOR_TEXT	: &str = " This concoction of creatine and taurine makes your heart race, but doesn't give you wings.";
+static	HEALTHPOTION_WEIGHT			: u32 = 1;
+static  HEALTHPOTION_VALUE			: u32 = 10;
 
-pub struct Dirk {
+pub struct HealthPotion {
     // GameObject
     game_object_data    : GameObjectData,
 
     // Item
     item_data           : ItemData,
-
-    // Weapon
-    weapon_data         : WeaponData,
 }
 
-crate::impl_Weapon!(Dirk);
+crate::impl_GameObject!(HealthPotion);
 
-impl  Default for Dirk {
-    fn default() -> Dirk {
-        let result = Dirk {
-            game_object_data    : GameObjectData    { name : String::from(DIRK_NAME), flavor_text : String::from(DIRK_FLAVOR_TEXT) },
-            item_data           : ItemData          { weight : DIRK_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Weapon },
-            weapon_data         : WeaponData        { attack_points : DIRK_ATTACK_POINTS, attack_mode_text : String::from(DIRK_ATTACK_MODE_TEXT) },
+crate::impl_Item!(HealthPotion);
+
+impl  Default for HealthPotion {
+    fn default() -> HealthPotion {
+        let result = HealthPotion {
+            game_object_data    : GameObjectData    { name : String::from(HEALTHPOTION_NAME), flavor_text : String::from(HEALTHPOTION_FLAVOR_TEXT) },
+            item_data           : ItemData          { weight : HEALTHPOTION_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Health },
         };
         return result;
     }

@@ -20,10 +20,10 @@
 use std::rc::Rc;
 use crate::game::gameobject::*;
 use crate::game::locatable::*;
-use crate::game::entity::*;
-use crate::game::dirk::*;
-use crate::game::buckler::*;
-use crate::game::healthpotion::*;
+use crate::game::entities::entity::*;
+use crate::game::items::weapons::dirk::*;
+use crate::game::items::shields::buckler::*;
+use crate::game::items::other::healthpotion::*;
 
 static PLAYER_NAME          : &str = "Chain";
 

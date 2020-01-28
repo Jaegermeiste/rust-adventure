@@ -19,8 +19,8 @@
 **************************************************************************/
 use traitcast::{traitcast};
 use crate::game::gameobject::*;
-use crate::game::item::*;
-use crate::game::weapon::*;
+use crate::game::items::item::*;
+use crate::game::items::weapons::weapon::*;
 
 static	RATTOOTH_NAME				: &str = "Rat Tooth";
 static	RATTOOTH_FLAVOR_TEXT		: &str = " The bacterial plaque is more likely to do damage than the bite.";

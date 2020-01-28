@@ -17,32 +17,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::rc::Rc;
-use crate::input::*;
-mod world;
-#[macro_use]
-mod gameobject;
-mod locatable;
-mod entities;
-mod items;
-use crate::game::world::castle::*;
-use crate::game::entities::player::*;
-
-pub struct Game {
-    input: Rc<Input>,
-
-    castle: Castle,
-    player: Player,
-}
-
-impl Game {
-    pub fn new(in_input : &Rc<Input>) -> Game {
-        Game { 
-            input: Rc::clone(&in_input),
-            castle: Castle::new(),
-            player: Player::new(),
-            }
-    }
-    
-    pub fn run(&self) {}
-}
+pub mod entity;
+pub mod player;
+pub mod creatures;

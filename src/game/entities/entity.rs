@@ -22,8 +22,8 @@ use traitcast::{TraitcastFrom};
 extern crate rand;
 use crate::game::gameobject::*;
 use crate::game::locatable::*;
-use crate::game::item::*;
-use crate::game::backpack::*;
+use crate::game::items::item::*;
+use crate::game::items::backpack::*;
 
 pub static ATTACK_MIN_SCALE     : f32 = 0.1;
 pub static ATTACK_MAX_SCALE     : f32 =	1.3;
@@ -118,7 +118,7 @@ macro_rules! impl_Entity {
                 let mut attack_roll :u32 = 0;
                 let weapon_opt = self.entity_data.pack.current_weapon();
                 let mut random_device = rand::thread_rng();
-                let	scalar = rand::distributions::Uniform::new(crate::game::entity::ATTACK_MIN_SCALE, crate::game::entity::ATTACK_MAX_SCALE);
+                let	scalar = rand::distributions::Uniform::new(crate::game::entities::entity::ATTACK_MIN_SCALE, crate::game::entities::entity::ATTACK_MAX_SCALE);
             
                 if weapon_opt.is_some() {
                     let weapon = weapon_opt.unwrap();
@@ -150,7 +150,7 @@ macro_rules! impl_Entity {
                 let mut damage_taken : i32;
                 let shield_opt = self.entity_data.pack.current_shield();
                 let mut random_device = rand::thread_rng();
-                let	scalar = rand::distributions::Uniform::new(crate::game::entity::DEFENSE_MIN_SCALE, crate::game::entity::DEFENSE_MAX_SCALE);
+                let	scalar = rand::distributions::Uniform::new(crate::game::entities::entity::DEFENSE_MIN_SCALE, crate::game::entities::entity::DEFENSE_MAX_SCALE);
             
                 if shield_opt.is_some() {
                     let shield = shield_opt.unwrap();
@@ -216,11 +216,11 @@ macro_rules! impl_Entity {
                 self.entity_data.pack.print_items();
             }
 
-            fn get_pack_item_for_index (&mut self, index : usize) -> Rc<dyn crate::game::item::Item> {
+            fn get_pack_item_for_index (&mut self, index : usize) -> Rc<dyn crate::game::items::item::Item> {
                 return self.entity_data.pack.drop_item(index).unwrap();
             }
 
-            fn has_pack_item_of_type (&self, item_type : crate::game::item::ItemType) -> bool {
+            fn has_pack_item_of_type (&self, item_type : crate::game::items::item::ItemType) -> bool {
                 return self.entity_data.pack.item_type_exists(item_type);
             }
 
@@ -228,7 +228,7 @@ macro_rules! impl_Entity {
                 return self.entity_data.xp;
             }
 
-            fn pack (&self) -> Option<Rc<&crate::game::backpack::Backpack>> {
+            fn pack (&self) -> Option<Rc<&crate::game::items::backpack::Backpack>> {
                 return Option::Some(Rc::new(&self.entity_data.pack));
             }
         }

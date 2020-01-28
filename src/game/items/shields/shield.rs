@@ -17,7 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use crate::game::item::*;
+use crate::game::items::item::*;
 
 pub static	SHIELD_DEFAULT_DEFENSE_POINTS       : u32   = 1;
 pub static	SHIELD_DEFAULT_DEFENSE_MODE_TEXT    : &str  = "blocks";

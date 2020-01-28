@@ -18,7 +18,7 @@
 
 **************************************************************************/
 use traitcast::{/*traitcast,*/ TraitcastFrom};
-use crate::game::item::*;
+use crate::game::items::item::*;
 
 pub static	WEAPON_DEFAULT_ATTACK_POINTS    : u32 = 1;
 pub static	WEAPON_DEFAULT_ATTACK_MODE_TEXT : &str = "attacks";

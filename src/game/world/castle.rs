@@ -18,31 +18,30 @@
 
 **************************************************************************/
 use std::rc::Rc;
-use crate::input::*;
-mod world;
-#[macro_use]
-mod gameobject;
-mod locatable;
-mod entities;
-mod items;
-use crate::game::world::castle::*;
-use crate::game::entities::player::*;
+use crate::game::gameobject::*;
+use crate::game::world::spaces::space::*;
 
-pub struct Game {
-    input: Rc<Input>,
+pub static CASTLE_NAME          : &str  = "Castle Wolfenstein";
+pub static CASTLE_FLAVOR_TEXT   : &str  = " Heavily worn, this bag is made of a pliant leather of unknown origin.";
 
-    castle: Castle,
-    player: Player,
+pub static CASTLE_WIDTH         : usize = 5;
+pub static CASTLE_HEIGHT        : usize = 7;
+
+pub struct Castle {
+    // GameObject
+    game_object_data    : GameObjectData,
+
+    // Castle
+    spaces      : Vec<Rc<Space>>,
 }
 
-impl Game {
-    pub fn new(in_input : &Rc<Input>) -> Game {
-        Game { 
-            input: Rc::clone(&in_input),
-            castle: Castle::new(),
-            player: Player::new(),
-            }
+impl Castle {
+    pub fn new() -> Castle {
+        Castle{ 
+            game_object_data : GameObjectData::default(),
+            spaces      : Vec::new(),
+        }
     }
-    
-    pub fn run(&self) {}
 }
+
+crate::impl_GameObject!(Castle);

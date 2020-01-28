@@ -17,31 +17,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-use std::rc::Rc;
-use crate::game::gameobject::*;
-use crate::game::space::*;
-
-pub static CASTLE_NAME          : &str  = "Castle Wolfenstein";
-pub static CASTLE_FLAVOR_TEXT   : &str  = " Heavily worn, this bag is made of a pliant leather of unknown origin.";
-
-pub static CASTLE_WIDTH         : usize = 5;
-pub static CASTLE_HEIGHT        : usize = 7;
-
-pub struct Castle {
-    // GameObject
-    game_object_data    : GameObjectData,
-
-    // Castle
-    spaces      : Vec<Rc<Space>>,
-}
-
-impl Castle {
-    pub fn new() -> Castle {
-        Castle{ 
-            game_object_data : GameObjectData::default(),
-            spaces      : Vec::new(),
-        }
-    }
-}
-
-crate::impl_GameObject!(Castle);
+pub mod item;
+pub mod backpack;
+pub mod weapons;
+pub mod shields;
+pub mod other;

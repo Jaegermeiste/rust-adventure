@@ -20,7 +20,7 @@
 use std::rc::Rc;
 use crate::game::gameobject::*;
 use crate::game::locatable::*;
-use crate::game::backpack::*;
+use crate::game::items::backpack::*;
 
 static	SPACE_DEFAULT_SPECIAL_ACTION_TEXT : &str =	"Turn Lights On";
 

@@ -19,8 +19,8 @@
 **************************************************************************/
 use traitcast::{traitcast};
 use crate::game::gameobject::*;
-use crate::game::item::*;
-use crate::game::shield::*;
+use crate::game::items::item::*;
+use crate::game::items::shields::shield::*;
 
 static	BUCKLER_NAME				: &str = "Buckler";
 static	BUCKLER_FLAVOR_TEXT			: &str = " A tiny shield the size of a dinner plate.";
