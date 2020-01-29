@@ -20,12 +20,11 @@
 use crate::game::gameobject::*;
 use crate::game::items::item::*;
 
-static	HEALTHPOTION_NAME			: &str = "Health Potion";
-static	HEALTHPOTION_FLAVOR_TEXT	: &str = " This concoction of creatine and taurine makes your heart race, but doesn't give you wings.";
-static	HEALTHPOTION_WEIGHT			: u32 = 1;
-static  HEALTHPOTION_VALUE			: u32 = 10;
+static	THRONEROOMKEY_NAME			: &str = "Throne Room Key";
+static	THRONEROOMKEY_FLAVOR_TEXT	: &str = " This ornate skeleton-style key gives you access to your goal.";
+static	THRONEROOMKEY_WEIGHT		: u32 = 0;
 
-pub struct HealthPotion {
+pub struct ThroneRoomKey {
     // GameObject
     game_object_data    : GameObjectData,
 
@@ -33,15 +32,15 @@ pub struct HealthPotion {
     item_data           : ItemData,
 }
 
-crate::impl_GameObject!(HealthPotion);
+crate::impl_GameObject!(ThroneRoomKey);
 
-crate::impl_Item!(HealthPotion);
+crate::impl_Item!(ThroneRoomKey);
 
-impl  Default for HealthPotion {
-    fn default() -> HealthPotion {
-        let result = HealthPotion {
-            game_object_data    : GameObjectData    { name : String::from(HEALTHPOTION_NAME), flavor_text : String::from(HEALTHPOTION_FLAVOR_TEXT) },
-            item_data           : ItemData          { weight : HEALTHPOTION_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Health },
+impl  Default for ThroneRoomKey {
+    fn default() -> ThroneRoomKey {
+        let result = ThroneRoomKey {
+            game_object_data    : GameObjectData    { name : String::from(THRONEROOMKEY_NAME), flavor_text : String::from(THRONEROOMKEY_FLAVOR_TEXT) },
+            item_data           : ItemData          { weight : THRONEROOMKEY_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::ThroneRoomKey },
         };
         return result;
     }

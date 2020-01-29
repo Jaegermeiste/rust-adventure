@@ -17,7 +17,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub mod shield;
-pub mod buckler;
-pub mod heater;
-pub mod scutum;
+pub mod rattooth;
+pub mod spectrelifesap;
+pub mod demogorgonupsidedown;

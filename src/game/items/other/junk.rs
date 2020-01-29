@@ -17,7 +17,31 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub mod shield;
-pub mod buckler;
-pub mod heater;
-pub mod scutum;
+use crate::game::gameobject::*;
+use crate::game::items::item::*;
+
+static	JUNK_NAME			: &str = "Junk";
+static	JUNK_FLAVOR_TEXT	: &str = " An assortment of random objects. Might be worth something to a peddler, if there were any around this cursed place.";
+static	JUNK_WEIGHT			: u32 = 3;
+
+pub struct Junk {
+    // GameObject
+    game_object_data    : GameObjectData,
+
+    // Item
+    item_data           : ItemData,
+}
+
+crate::impl_GameObject!(Junk);
+
+crate::impl_Item!(Junk);
+
+impl  Default for Junk {
+    fn default() -> Junk {
+        let result = Junk {
+            game_object_data    : GameObjectData    { name : String::from(JUNK_NAME), flavor_text : String::from(JUNK_FLAVOR_TEXT) },
+            item_data           : ItemData          { weight : JUNK_WEIGHT, property : ItemProperty::Droppable, ..Default::default() },
+        };
+        return result;
+    }
+}

@@ -18,3 +18,6 @@
 
 **************************************************************************/
 pub mod healthpotion;
+pub mod junk;
+pub mod throneroomkey;
+pub mod goal;

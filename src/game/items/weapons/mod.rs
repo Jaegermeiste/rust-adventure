@@ -18,5 +18,8 @@
 
 **************************************************************************/
 pub mod weapon;
-pub mod rattooth;
+pub mod creaturespecific;
 pub mod dirk;
+pub mod falchion;
+pub mod schiavona;
+pub mod swordofathousandtruths;

@@ -17,31 +17,36 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use traitcast::{traitcast};
 use crate::game::gameobject::*;
 use crate::game::items::item::*;
+use crate::game::items::shields::shield::*;
 
-static	HEALTHPOTION_NAME			: &str = "Health Potion";
-static	HEALTHPOTION_FLAVOR_TEXT	: &str = " This concoction of creatine and taurine makes your heart race, but doesn't give you wings.";
-static	HEALTHPOTION_WEIGHT			: u32 = 1;
-static  HEALTHPOTION_VALUE			: u32 = 10;
+static	HEATER_NAME					: &str = "Heater";
+static	HEATER_FLAVOR_TEXT			: &str = " Despite the name, this does not keep you warm.";
+static	HEATER_WEIGHT				: u32 = 15;
+static	HEATER_DEFENSE_POINTS		: u32 = 30;
+static  HEATER_DEFENSE_MODE_TEXT	: &str = "deflects";
 
-pub struct HealthPotion {
+pub struct Heater {
     // GameObject
     game_object_data    : GameObjectData,
 
     // Item
     item_data           : ItemData,
+
+    // Shield
+    shield_data         : ShieldData,
 }
 
-crate::impl_GameObject!(HealthPotion);
+crate::impl_Shield!(Heater);
 
-crate::impl_Item!(HealthPotion);
-
-impl  Default for HealthPotion {
-    fn default() -> HealthPotion {
-        let result = HealthPotion {
-            game_object_data    : GameObjectData    { name : String::from(HEALTHPOTION_NAME), flavor_text : String::from(HEALTHPOTION_FLAVOR_TEXT) },
-            item_data           : ItemData          { weight : HEALTHPOTION_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Health },
+impl  Default for Heater {
+    fn default() -> Heater {
+        let result = Heater {
+            game_object_data    : GameObjectData    { name : String::from(HEATER_NAME), flavor_text : String::from(HEATER_FLAVOR_TEXT) },
+            item_data           : ItemData          { weight : HEATER_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Shield },
+            shield_data         : ShieldData        { defense_points : HEATER_DEFENSE_POINTS, defense_mode_text : String::from(HEATER_DEFENSE_MODE_TEXT) },
         };
         return result;
     }

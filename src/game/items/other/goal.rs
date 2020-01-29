@@ -17,7 +17,31 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub mod shield;
-pub mod buckler;
-pub mod heater;
-pub mod scutum;
+use crate::game::gameobject::*;
+use crate::game::items::item::*;
+
+static	GOAL_NAME			: &str = "Black Forest Cake";
+static	GOAL_FLAVOR_TEXT	: &str = " The cake is not a lie. This fabled MacGuffin has somehow been freshly baked and frosted by mysterious forces unknown.";
+static	GOAL_WEIGHT			: u32 = 0;
+
+pub struct Goal {
+    // GameObject
+    game_object_data    : GameObjectData,
+
+    // Item
+    item_data           : ItemData,
+}
+
+crate::impl_GameObject!(Goal);
+
+crate::impl_Item!(Goal);
+
+impl  Default for Goal {
+    fn default() -> Goal {
+        let result = Goal {
+            game_object_data    : GameObjectData    { name : String::from(GOAL_NAME), flavor_text : String::from(GOAL_FLAVOR_TEXT) },
+            item_data           : ItemData          { weight : GOAL_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::GameWin },
+        };
+        return result;
+    }
+}

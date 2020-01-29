@@ -17,31 +17,36 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
+use traitcast::{traitcast};
 use crate::game::gameobject::*;
 use crate::game::items::item::*;
+use crate::game::items::weapons::weapon::*;
 
-static	HEALTHPOTION_NAME			: &str = "Health Potion";
-static	HEALTHPOTION_FLAVOR_TEXT	: &str = " This concoction of creatine and taurine makes your heart race, but doesn't give you wings.";
-static	HEALTHPOTION_WEIGHT			: u32 = 1;
-static  HEALTHPOTION_VALUE			: u32 = 10;
+static	SCHIAVONA_NAME				: &str = "Schiavona";
+static	SCHIAVONA_FLAVOR_TEXT		: &str = " An elegant weapon from another age.";
+static	SCHIAVONA_WEIGHT			: u32 = 3;
+static	SCHIAVONA_ATTACK_POINTS		: u32 = 50;
+static  SCHIAVONA_ATTACK_MODE_TEXT	: &str = "slices";
 
-pub struct HealthPotion {
+pub struct Schiavona {
     // GameObject
     game_object_data    : GameObjectData,
 
     // Item
     item_data           : ItemData,
+
+    // Weapon
+    weapon_data         : WeaponData,
 }
 
-crate::impl_GameObject!(HealthPotion);
+crate::impl_Weapon!(Schiavona);
 
-crate::impl_Item!(HealthPotion);
-
-impl  Default for HealthPotion {
-    fn default() -> HealthPotion {
-        let result = HealthPotion {
-            game_object_data    : GameObjectData    { name : String::from(HEALTHPOTION_NAME), flavor_text : String::from(HEALTHPOTION_FLAVOR_TEXT) },
-            item_data           : ItemData          { weight : HEALTHPOTION_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Health },
+impl  Default for Schiavona {
+    fn default() -> Schiavona {
+        let result = Schiavona {
+            game_object_data    : GameObjectData    { name : String::from(SCHIAVONA_NAME), flavor_text : String::from(SCHIAVONA_FLAVOR_TEXT) },
+            item_data           : ItemData          { weight : SCHIAVONA_WEIGHT, property : ItemProperty::Droppable, item_type : ItemType::Weapon },
+            weapon_data         : WeaponData        { attack_points : SCHIAVONA_ATTACK_POINTS, attack_mode_text : String::from(SCHIAVONA_ATTACK_MODE_TEXT) },
         };
         return result;
     }

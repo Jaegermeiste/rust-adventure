@@ -48,9 +48,11 @@ fn main() {
     let main_menu_about_option	    = menu_system.add_action_to_page(main_menu_index,   MenuAction::new("About",	                    MenuActionType::Selector));
     let main_menu_quit_option		= menu_system.add_action_to_page(main_menu_index,   MenuAction::new("Exit Program",                 MenuActionType::ExitMenu));
     let about_menu_copyright_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Show Copyright Details",	    MenuActionType::Selector));
+    let about_menu_fair_use_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Show Fair Use Disclaimer",	    MenuActionType::Selector));
     let about_menu_warranty_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Show Warranty Details",	    MenuActionType::Selector));
     let about_menu_redist_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Show Redistibution Details",   MenuActionType::Selector));
     let about_menu_license_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Show License",                 MenuActionType::Selector));
+    let about_menu_credits_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Show Credits and Attribution", MenuActionType::Selector));
     let about_menu_main_menu_option	= menu_system.add_action_to_page(about_page_index,  MenuAction::new("Return to Main Menu",	        MenuActionType::ExitMenu));
 
     // Set terminal size
@@ -80,9 +82,15 @@ fn main() {
 
                 if about_menu_selection == about_menu_copyright_option {
                     let copyright_text = 
-                    "rust-adventure\n(C) 2019 Jason George\n\nThis program is made available by the author to the open source community under the terms of the GNU General Public License, Version 3.\n".to_string();
+                    "rust-adventure\n(C) 2019 Jason George\n\nThis program is made available by the author to the open source community under the terms of the GNU General Public License, Version 3.\n\nPortions of this work constitute a parody under the Fair Use Doctrine.\nThis transformative work constitutes a fair-use of any copyrighted material as provided for in Section 107 of US Copyright Law.\n".to_string();
                 
                     scrolltext.print_text_range(copyright_text, 0, height as u32);
+                }
+                else if about_menu_selection == about_menu_fair_use_option {
+                    let fair_use_text = 
+                    "Disclaimer and Fair Use Statement\n\nThis application may contain or reference copyrighted material, the use of which may not have been specifically authorized by the copyright owner. This material is used in a parodic manner. The material contained in this application is distributed without profit for research and educational purposes. Only small portions of the original work are being used and those could not be used easily to duplicate the original work.\n\nThis should constitute a ‘fair use’ of any such copyrighted material (referenced and provided for in section 107 of the US Copyright Law).\n\nIf you wish to use any copyrighted material from this application for purposes of your own that go beyond ‘fair use’, you must obtain expressed permission from the copyright owner.\n".to_string();
+                
+                    scrolltext.print_text_range(fair_use_text, 0, height as u32);
                 }
                 else if about_menu_selection == about_menu_warranty_option {
                     let warranty_text = 
@@ -98,6 +106,12 @@ fn main() {
                 }
                 else if about_menu_selection == about_menu_license_option {
                     scrolltext.print_file_range("LICENSE.txt", 0, height as u32);
+                }
+                else if about_menu_selection == about_menu_credits_option {
+                    let attribution_text =
+                    "Credits\n\n2017-2020 Jason George\n\nThanks to my family, who (barely) puts up with me writing this stuff all day.\n\n\nThanks to all the game developers and pop culture creatives whose tireless crunch has added to the enjoyment of billions and inspired this work.\nThese inspirations include (but are not limited to):\n - Muse Software\n - id Software\n - Valve Software\n - Red Bull\n - Bethesda Softworks\n - Ubisoft Entertainment\n - Netflix\n - South Park Studios\n - Blizzard Entertainment\n - BioWare\n - Nintendo\n\n\nTo anyone I missed explicitly attributing, thank you!\n\n".to_string();
+
+                    scrolltext.print_text_range(attribution_text, 0, height as u32);
                 }
 
                 about_menu_selection = menu_system.run_page(about_page_index);
