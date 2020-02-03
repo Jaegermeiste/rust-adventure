@@ -19,3 +19,5 @@
 **************************************************************************/
 pub mod space;
 pub mod gatehouse;
+pub mod hallway;
+pub mod throneroom;

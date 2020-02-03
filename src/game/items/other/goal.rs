@@ -20,7 +20,7 @@
 use crate::game::gameobject::*;
 use crate::game::items::item::*;
 
-static	GOAL_NAME			: &str = "Black Forest Cake";
+pub static	GOAL_NAME		: &str = "Black Forest Cake";
 static	GOAL_FLAVOR_TEXT	: &str = " The cake is not a lie. This fabled MacGuffin has somehow been freshly baked and frosted by mysterious forces unknown.";
 static	GOAL_WEIGHT			: u32 = 0;
 
