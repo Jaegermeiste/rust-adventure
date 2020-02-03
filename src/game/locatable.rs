@@ -25,6 +25,17 @@ pub struct LocationData {
     pub y_coord     : u32,
 }
 
+impl Default for LocationData {
+    fn default() -> LocationData {
+        let data = LocationData {
+            x_coord                     :   0,
+            y_coord                     :   0,
+        };
+
+        return data;
+    }
+}
+
 pub trait Locatable: GameObject + TraitcastFrom {
     fn set_x_coord          (&mut self, coord : u32);
     fn set_y_coord          (&mut self, coord : u32);
