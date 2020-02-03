@@ -20,7 +20,7 @@
 use std::io::{Write};
 use std::fmt;
 use crate::input::*;
-use crate::menuaction::*;
+use crate::menu::menuaction::*;
 
 pub const MAX_MENU_PAGE_OPTIONS : usize =	1024;
 

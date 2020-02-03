@@ -20,15 +20,12 @@
 
 mod input;
 mod menu;
-mod menuaction;
-mod menupage;
 mod game;
-mod scrolltext;
 use crate::input::*;
-use crate::menu::*;
-use crate::menuaction::*;
-use crate::game::*;
-use crate::scrolltext::*;
+use crate::menu::menu::*;
+use crate::menu::menuaction::*;
+use crate::menu::scrolltext::*;
+use crate::game::game::*;
 use std::io::{stdout, Write};
 use crossterm::{
     terminal::{SetSize},

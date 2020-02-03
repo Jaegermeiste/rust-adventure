@@ -19,12 +19,6 @@
 **************************************************************************/
 use std::rc::Rc;
 use crate::input::*;
-mod world;
-#[macro_use]
-mod gameobject;
-mod locatable;
-mod entities;
-mod items;
 use crate::game::world::castle::*;
 use crate::game::entities::player::*;
 

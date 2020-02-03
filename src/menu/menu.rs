@@ -19,8 +19,8 @@
 **************************************************************************/
 use std::rc::Rc;
 use crate::input::*;
-use crate::menuaction::*;
-use crate::menupage::*;
+use crate::menu::menuaction::*;
+use crate::menu::menupage::*;
 
 pub struct Menu {
     menu_pages: Vec<MenuPage>,
