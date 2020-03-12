@@ -25,13 +25,10 @@ use crate::game::gameobject::*;
 use crate::game::locatable::*;
 use crate::game::world::spaces::space::*;
 use crate::game::items::backpack::*;
-use crate::game::items::item::*;
-use crate::game::items::weapons::weapon::*;
 use crate::game::items::weapons::dirk::*;
 use crate::game::items::weapons::falchion::*;
 use crate::game::items::weapons::schiavona::*;
 use crate::game::items::weapons::swordofathousandtruths::*;
-use crate::game::items::shields::shield::*;
 use crate::game::items::shields::buckler::*;
 use crate::game::items::shields::heater::*;
 use crate::game::items::shields::scutum::*;
@@ -42,13 +39,13 @@ static  ARMORY_FLAVOR_TEXT			: &str = " Under the odor of must and mold, you det
 static  ARMORY_SPECIAL_ACTION_TEXT 	: &str = "Break chains on Weapons Rack";
 
 static	ARMORY_DIRK_DROP_PCT		: u32 = 30;
-static	ARMORY_FALCHION_DROP_PCT	: u32 = 50;
-static	ARMORY_SCHIAVONA_DROP_PCT	: u32 = 70;
-static	ARMORY_SWORD1000_DROP_PCT	: u32 = 90;
+static	ARMORY_FALCHION_DROP_PCT	: u32 = ARMORY_DIRK_DROP_PCT + 20;
+static	ARMORY_SCHIAVONA_DROP_PCT	: u32 = ARMORY_FALCHION_DROP_PCT + 20;
+static	ARMORY_SWORD1000_DROP_PCT	: u32 = ARMORY_SCHIAVONA_DROP_PCT + 20;
 
 static ARMORY_BUCKLER_DROP_PCT		: u32 = 30;
-static ARMORY_HEATER_DROP_PCT		: u32 = 50;
-static ARMORY_SCUTUM_DROP_PCT		: u32 = 70;
+static ARMORY_HEATER_DROP_PCT		: u32 = ARMORY_BUCKLER_DROP_PCT + 20;
+static ARMORY_SCUTUM_DROP_PCT		: u32 = ARMORY_HEATER_DROP_PCT + 20;
 
 pub struct Armory {
     // GameObject
