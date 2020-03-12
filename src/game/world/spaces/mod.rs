@@ -21,3 +21,5 @@ pub mod space;
 pub mod gatehouse;
 pub mod hallway;
 pub mod throneroom;
+pub mod bathroom;
+pub mod armory;
