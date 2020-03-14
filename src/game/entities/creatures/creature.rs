@@ -17,8 +17,25 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **************************************************************************/
-pub mod creature;
-pub mod rats;
-pub mod skeleton;
-pub mod spectre;
-pub mod demogorgon;
+use crate::game::entities::entity::*;
+
+pub static	CREATURE_HEALTH_DROP_PCT       : f64   = 0.6;
+
+/*pub struct Creature {
+    game_object_data    : GameObjectData,
+    location_data       : LocationData,
+    entity_data         : EntityData
+}*/
+
+pub trait Creature: Entity {
+}
+
+#[macro_export]
+macro_rules! impl_Creature { 
+    ($T:ident) => {
+        crate::impl_Entity!($T);
+
+        impl Creature for $T {
+        }
+    }
+}

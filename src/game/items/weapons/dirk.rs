@@ -22,7 +22,7 @@ use crate::game::gameobject::*;
 use crate::game::items::item::*;
 use crate::game::items::weapons::weapon::*;
 
-static	DIRK_NAME				    : &str = "Dirk";
+pub static	DIRK_NAME				    : &str = "Dirk";
 static	DIRK_FLAVOR_TEXT		    : &str = " More of a letter opener than a proper weapon.";
 static	DIRK_WEIGHT				    : u32 = 1;
 static	DIRK_ATTACK_POINTS		    : u32 = 10;

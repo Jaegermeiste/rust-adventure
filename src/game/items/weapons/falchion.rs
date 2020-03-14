@@ -22,7 +22,7 @@ use crate::game::gameobject::*;
 use crate::game::items::item::*;
 use crate::game::items::weapons::weapon::*;
 
-static	FALCHION_NAME				: &str = "Falchion";
+pub static	FALCHION_NAME				: &str = "Falchion";
 static	FALCHION_FLAVOR_TEXT		: &str = " A glorified machete.";
 static	FALCHION_WEIGHT				: u32 = 3;
 static	FALCHION_ATTACK_POINTS		: u32 = 25;
