@@ -23,3 +23,6 @@ pub mod hallway;
 pub mod throneroom;
 pub mod bathroom;
 pub mod armory;
+pub mod bedroom;
+pub mod dungeon;
+pub mod dormitory;

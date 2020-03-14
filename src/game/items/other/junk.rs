@@ -20,7 +20,7 @@
 use crate::game::gameobject::*;
 use crate::game::items::item::*;
 
-static	JUNK_NAME			: &str = "Junk";
+pub static	JUNK_NAME			: &str = "Junk";
 static	JUNK_FLAVOR_TEXT	: &str = " An assortment of random objects. Might be worth something to a peddler, if there were any around this cursed place.";
 static	JUNK_WEIGHT			: u32 = 3;
 
