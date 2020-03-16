@@ -19,6 +19,8 @@
 **************************************************************************/
 use std::rc::Rc;
 use std::cell::RefCell;
+use num_derive::FromPrimitive;    
+use num_traits::FromPrimitive;
 use crate::game::gameobject::*;
 use crate::game::locatable::*;
 use crate::game::items::backpack::*;
@@ -26,25 +28,26 @@ use crate::game::items::other::junk::*;
 
 static	SPACE_DEFAULT_SPECIAL_ACTION_TEXT : &str =	"Light Torches";
 
-#[derive(Clone, Copy)]
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, FromPrimitive)]
 pub enum SpaceType {
-	None,
-	GateHouse,
-	ThroneRoom,
-	Hallway,
-	Bathroom,
-	Armory,
-	Bedroom,
-	Dormitory,
-	Dungeon,
+	None = 0,
+	GateHouse = 1,
+	ThroneRoom = 2,
+	Hallway = 3,
+	Bathroom = 4,
+	Armory = 5,
+	Bedroom = 6,
+	Dormitory = 7,
+	Dungeon = 8,
 	// NumTypes
 }
 
 pub struct SpaceData {
-    pub right                       : Option<Rc<dyn Space>>,
-    pub left                        : Option<Rc<dyn Space>>,
-    pub top                         : Option<Rc<dyn Space>>,
-    pub bottom                      : Option<Rc<dyn Space>>,
+    pub right                       : Option<Rc<RefCell<dyn Space>>>,
+    pub left                        : Option<Rc<RefCell<dyn Space>>>,
+    pub top                         : Option<Rc<RefCell<dyn Space>>>,
+    pub bottom                      : Option<Rc<RefCell<dyn Space>>>,
 
     pub special_action_text         : String,
     pub special_action_performed    : bool,
@@ -78,15 +81,15 @@ impl Default for SpaceData {
 }
 
 pub trait Space: GameObject + Locatable {
-    fn set_right                (&mut self, in_right : Rc<dyn Space>);
-    fn set_left                 (&mut self, in_left : Rc<dyn Space>);
-    fn set_top                  (&mut self, in_top : Rc<dyn Space>);
-    fn set_bottom               (&mut self, in_bottom : Rc<dyn Space>);
+    fn set_right                (&mut self, in_right : Rc<RefCell<dyn Space>>);
+    fn set_left                 (&mut self, in_left : Rc<RefCell<dyn Space>>);
+    fn set_top                  (&mut self, in_top : Rc<RefCell<dyn Space>>);
+    fn set_bottom               (&mut self, in_bottom : Rc<RefCell<dyn Space>>);
     
-    fn get_right                (&self)                             -> Option<Rc<dyn Space>>;
-    fn get_left                 (&self)                             -> Option<Rc<dyn Space>>;
-    fn get_top                  (&self)                             -> Option<Rc<dyn Space>>;
-    fn get_bottom               (&self)                             -> Option<Rc<dyn Space>>;
+    fn get_right                (&self)                             -> Option<Rc<RefCell<dyn Space>>>;
+    fn get_left                 (&self)                             -> Option<Rc<RefCell<dyn Space>>>;
+    fn get_top                  (&self)                             -> Option<Rc<RefCell<dyn Space>>>;
+    fn get_bottom               (&self)                             -> Option<Rc<RefCell<dyn Space>>>;
 
     fn is_movement_enabled      (&self)                             -> bool;
 
@@ -109,44 +112,44 @@ macro_rules! impl_Space {
         crate::impl_Locatable!($T);
 
         impl Space for $T {
-            fn set_right(&mut self, in_right : Rc<dyn Space>) {
+            fn set_right(&mut self, in_right : Rc<RefCell<dyn Space>>) {
                 self.space_data.right = Some(in_right); 
             }
 
-            fn set_left(&mut self, in_left : Rc<dyn Space>) {
+            fn set_left(&mut self, in_left : Rc<RefCell<dyn Space>>) {
                 self.space_data.left = Some(in_left); 
             }
 
-            fn set_top(&mut self, in_top : Rc<dyn Space>) {
+            fn set_top(&mut self, in_top : Rc<RefCell<dyn Space>>) {
                 self.space_data.top = Some(in_top); 
             }
 
-            fn set_bottom(&mut self, in_bottom : Rc<dyn Space>) {
+            fn set_bottom(&mut self, in_bottom : Rc<RefCell<dyn Space>>) {
                 self.space_data.bottom = Some(in_bottom); 
             }
 
-            fn get_right(&self) -> Option<Rc<dyn Space>> {
+            fn get_right(&self) -> Option<Rc<RefCell<dyn Space>>> {
                 if self.space_data.right.is_some() {
                     return Some(self.space_data.right.clone().unwrap());
                 }
                 return None;
             }
 
-            fn get_left(&self) -> Option<Rc<dyn Space>> {
+            fn get_left(&self) -> Option<Rc<RefCell<dyn Space>>> {
                 if self.space_data.left.is_some() {
                     return Some(self.space_data.left.clone().unwrap());
                 }
                 return None;
             }
 
-            fn get_top(&self) -> Option<Rc<dyn Space>> {
+            fn get_top(&self) -> Option<Rc<RefCell<dyn Space>>> {
                 if self.space_data.top.is_some() {
                     return Some(self.space_data.top.clone().unwrap());
                 }
                 return None;
             }
 
-            fn get_bottom(&self) -> Option<Rc<dyn Space>> {
+            fn get_bottom(&self) -> Option<Rc<RefCell<dyn Space>>> {
                 if self.space_data.bottom.is_some() {
                     return Some(self.space_data.bottom.clone().unwrap());
                 }
